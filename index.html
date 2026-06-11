@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Caravan of Wonders — An Arab World Trivia Adventure</title>
+<title>Caravan of Wonders — A 2D Arab World Trivia Adventure</title>
 <style>
   :root {
     --night: #1a1330;
@@ -30,10 +30,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px 12px;
+    padding: 16px 10px;
   }
 
-  #app { width: 100%; max-width: 760px; }
+  #app { width: 100%; max-width: 980px; }
 
   .screen { display: none; animation: fadeIn 0.5s ease; }
   .screen.active { display: block; }
@@ -42,278 +42,212 @@
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-
   @keyframes pop {
-    0% { transform: scale(0.9); }
-    60% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% { transform: scale(0.9); } 60% { transform: scale(1.05); } 100% { transform: scale(1); }
   }
-
   @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
+    0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); }
   }
 
   h1 {
-    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-size: clamp(1.7rem, 5vw, 2.7rem);
     text-align: center;
     color: var(--gold);
     text-shadow: 0 2px 18px rgba(243, 201, 105, 0.35);
     letter-spacing: 1px;
   }
-
-  .subtitle {
-    text-align: center;
-    font-size: 1.15rem;
-    margin: 8px 0 4px;
-    opacity: 0.9;
-  }
-
+  .subtitle { text-align: center; font-size: 1.12rem; margin: 8px 0 4px; opacity: 0.9; }
   .arabic {
-    text-align: center;
-    font-size: 1.3rem;
-    color: var(--gold);
-    direction: rtl;
-    margin-bottom: 20px;
-    opacity: 0.85;
+    text-align: center; font-size: 1.25rem; color: var(--gold);
+    direction: rtl; margin-bottom: 18px; opacity: 0.85;
   }
 
   .panel {
-    background: var(--card);
+    background: rgba(26, 19, 48, 0.92);
     border: 1px solid var(--card-border);
     border-radius: 16px;
-    padding: 22px;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
   }
 
   .intro-text {
-    text-align: center;
-    line-height: 1.7;
-    font-size: 1.05rem;
-    margin-bottom: 24px;
-    opacity: 0.92;
+    text-align: center; line-height: 1.7; font-size: 1.04rem;
+    margin-bottom: 22px; opacity: 0.92;
   }
 
   /* ---- Character selection ---- */
   .char-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 14px;
-    margin-bottom: 22px;
+    gap: 14px; margin-bottom: 22px;
   }
-
   .char-card {
     background: var(--card);
     border: 2px solid transparent;
     border-radius: 14px;
-    padding: 18px 12px;
+    padding: 16px 12px;
     text-align: center;
     cursor: pointer;
     transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
   }
-
   .char-card:hover { transform: translateY(-4px); border-color: var(--card-border); }
-
   .char-card.selected {
     border-color: var(--gold);
     background: rgba(243, 201, 105, 0.12);
     animation: pop 0.3s ease;
   }
-
-  .char-emoji { font-size: 2.6rem; display: block; margin-bottom: 8px; }
+  .char-card canvas { width: 72px; height: 96px; image-rendering: pixelated; }
   .char-name { font-weight: bold; color: var(--gold); font-size: 1.05rem; }
   .char-title { font-size: 0.85rem; opacity: 0.8; margin: 4px 0 8px; font-style: italic; }
   .char-perk {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     background: rgba(46, 196, 160, 0.15);
     border: 1px solid rgba(46, 196, 160, 0.4);
-    border-radius: 8px;
-    padding: 5px 7px;
-    color: #9ef0dc;
+    border-radius: 8px; padding: 5px 7px; color: #9ef0dc;
   }
 
   /* ---- Buttons ---- */
   .btn {
-    display: block;
-    width: 100%;
-    padding: 14px 20px;
-    font-size: 1.1rem;
-    font-family: inherit;
-    font-weight: bold;
+    display: block; width: 100%; padding: 13px 20px;
+    font-size: 1.08rem; font-family: inherit; font-weight: bold;
     color: var(--night);
     background: linear-gradient(135deg, var(--gold), var(--dune));
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
+    border: none; border-radius: 12px; cursor: pointer;
     transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
     box-shadow: 0 4px 18px rgba(243, 201, 105, 0.25);
   }
-
   .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(243, 201, 105, 0.4); }
   .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-
   .btn.secondary {
-    background: transparent;
-    color: var(--sand);
-    border: 1px solid var(--card-border);
-    box-shadow: none;
+    background: transparent; color: var(--sand);
+    border: 1px solid var(--card-border); box-shadow: none;
   }
 
-  /* ---- HUD ---- */
+  /* ---- Game HUD ---- */
   .hud {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 14px;
-    font-size: 1.05rem;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 8px; margin-bottom: 8px; font-size: 1rem;
   }
-
   .hud .stat {
     background: var(--card);
     border: 1px solid var(--card-border);
-    border-radius: 10px;
-    padding: 7px 13px;
+    border-radius: 10px; padding: 6px 11px; white-space: nowrap;
+  }
+  .hud .flags { font-size: 0.95rem; letter-spacing: 1px; }
+  .hud .flags .done-flag { opacity: 1; }
+  .hud .flags .todo-flag { opacity: 0.3; filter: grayscale(0.8); }
+  .hud .flags .cur-flag { text-shadow: 0 0 10px var(--gold); }
+  #btn-mute {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 10px; padding: 6px 11px; cursor: pointer; font-size: 1rem; color: var(--sand);
   }
 
-  .hud .hearts { letter-spacing: 2px; }
-
-  .journey-map {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-bottom: 18px;
-    font-size: 1.25rem;
-  }
-
-  .journey-map .stop {
-    opacity: 0.35;
-    filter: grayscale(0.8);
-    transition: all 0.3s ease;
-  }
-
-  .journey-map .stop.done { opacity: 1; filter: none; }
-  .journey-map .stop.current {
-    opacity: 1;
-    filter: none;
-    transform: scale(1.35);
-    text-shadow: 0 0 12px var(--gold);
-  }
-
-  .journey-map .path { opacity: 0.4; font-size: 0.8rem; }
-
-  /* ---- Scene & question ---- */
-  .scene-flag { font-size: 3.2rem; text-align: center; display: block; margin-bottom: 6px; }
-  .scene-country {
-    text-align: center;
-    color: var(--gold);
-    font-size: 1.6rem;
-    margin-bottom: 14px;
-  }
-
-  .scene-text, .encounter-text {
-    line-height: 1.75;
-    font-size: 1.08rem;
-    margin-bottom: 20px;
-  }
-
-  .encounter-text { font-style: italic; opacity: 0.92; }
-
-  .question-text {
-    font-size: 1.25rem;
-    color: var(--gold);
-    line-height: 1.5;
-    margin-bottom: 18px;
-  }
-
-  .answers { display: grid; gap: 10px; margin-bottom: 16px; }
-
-  .answer-btn {
-    padding: 13px 16px;
-    font-size: 1.02rem;
-    font-family: inherit;
-    text-align: left;
-    color: var(--sand);
-    background: var(--card);
+  /* ---- Stage (canvas + overlays) ---- */
+  .stage {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    max-width: 960px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
     border: 1px solid var(--card-border);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.18s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   }
+  #game { width: 100%; height: 100%; display: block; background: #000; }
 
+  .overlay {
+    position: absolute; inset: 0;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 14px;
+    overflow: auto;
+    background: rgba(10, 8, 18, 0.78);
+    z-index: 5;
+  }
+  .overlay.show { display: flex; animation: fadeIn 0.35s ease; }
+  .overlay .panel { max-width: 580px; width: 100%; max-height: 100%; overflow: auto; }
+
+  #toast {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    background: rgba(26, 19, 48, 0.9);
+    border: 1px solid var(--card-border);
+    border-radius: 10px; padding: 8px 16px;
+    color: var(--gold); font-style: italic; font-size: 0.95rem;
+    pointer-events: none; opacity: 0; transition: opacity 0.4s ease;
+    z-index: 4; max-width: 90%; text-align: center;
+  }
+  #toast.show { opacity: 1; }
+
+  .scene-flag { font-size: 3rem; text-align: center; display: block; margin-bottom: 4px; }
+  .scene-country { text-align: center; color: var(--gold); font-size: 1.45rem; margin-bottom: 12px; }
+  .scene-text { line-height: 1.7; font-size: 1.03rem; margin-bottom: 18px; }
+
+  .enc-persona {
+    text-align: center; color: var(--oasis); font-weight: bold;
+    font-size: 1.05rem; margin-bottom: 10px;
+  }
+  .encounter-text { font-style: italic; opacity: 0.92; line-height: 1.65; font-size: 1rem; margin-bottom: 16px; }
+  .question-text { font-size: 1.15rem; color: var(--gold); line-height: 1.45; margin-bottom: 14px; }
+
+  .answers { display: grid; gap: 9px; margin-bottom: 12px; }
+  .answer-btn {
+    padding: 11px 14px; font-size: 0.98rem; font-family: inherit; text-align: left;
+    color: var(--sand); background: var(--card);
+    border: 1px solid var(--card-border); border-radius: 10px;
+    cursor: pointer; transition: all 0.18s ease;
+  }
   .answer-btn:hover:not(:disabled) { background: rgba(243, 201, 105, 0.14); transform: translateX(4px); }
   .answer-btn:disabled { cursor: default; }
-  .answer-btn.correct {
-    background: rgba(46, 196, 160, 0.25);
-    border-color: var(--oasis);
-    animation: pop 0.35s ease;
-  }
-  .answer-btn.wrong {
-    background: rgba(228, 87, 94, 0.22);
-    border-color: var(--danger);
-    animation: shake 0.35s ease;
-  }
+  .answer-btn.correct { background: rgba(46, 196, 160, 0.25); border-color: var(--oasis); animation: pop 0.35s ease; }
+  .answer-btn.wrong { background: rgba(228, 87, 94, 0.22); border-color: var(--danger); animation: shake 0.35s ease; }
   .answer-btn.removed { opacity: 0.25; text-decoration: line-through; }
 
-  .hint-row { display: flex; gap: 10px; }
-  .hint-row .btn { font-size: 0.95rem; padding: 10px; }
-
   .feedback {
-    margin-top: 16px;
-    padding: 14px 16px;
-    border-radius: 10px;
-    line-height: 1.6;
-    display: none;
+    margin-top: 12px; padding: 12px 14px; border-radius: 10px;
+    line-height: 1.55; display: none; font-size: 0.97rem;
   }
   .feedback.show { display: block; animation: fadeIn 0.4s ease; }
   .feedback.good { background: rgba(46, 196, 160, 0.14); border: 1px solid rgba(46, 196, 160, 0.45); }
   .feedback.bad { background: rgba(228, 87, 94, 0.12); border: 1px solid rgba(228, 87, 94, 0.45); }
-  .feedback .verdict { font-weight: bold; font-size: 1.1rem; display: block; margin-bottom: 6px; }
+  .feedback .verdict { font-weight: bold; font-size: 1.05rem; display: block; margin-bottom: 5px; }
   .feedback.good .verdict { color: #9ef0dc; }
   .feedback.bad .verdict { color: #ffb3b7; }
 
-  .toast {
-    text-align: center;
-    color: var(--gold);
-    font-style: italic;
-    margin-bottom: 12px;
-    min-height: 1.4em;
+  /* ---- Touch controls ---- */
+  .touch-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    max-width: 960px; margin: 10px auto 0; gap: 8px;
+    user-select: none; -webkit-user-select: none;
+  }
+  .touch-group { display: flex; gap: 8px; }
+  .tbtn {
+    min-width: 64px; padding: 14px 18px;
+    font-size: 1.3rem; font-family: inherit;
+    color: var(--sand); background: var(--card);
+    border: 1px solid var(--card-border); border-radius: 14px;
+    cursor: pointer; touch-action: none;
+  }
+  .tbtn:active { background: rgba(243, 201, 105, 0.25); }
+
+  .help-line {
+    text-align: center; margin-top: 8px;
+    font-size: 0.85rem; opacity: 0.55;
   }
 
   /* ---- End screens ---- */
-  .end-emoji { font-size: 4rem; text-align: center; display: block; margin-bottom: 10px; }
-  .end-title { text-align: center; font-size: 1.9rem; color: var(--gold); margin-bottom: 14px; }
-  .end-stats {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin: 18px 0 22px;
-  }
+  .end-emoji { font-size: 3.4rem; text-align: center; display: block; margin-bottom: 8px; }
+  .end-title { text-align: center; font-size: 1.6rem; color: var(--gold); margin-bottom: 12px; }
+  .end-stats { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 14px 0 18px; }
   .end-stats .stat {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 12px 20px;
-    text-align: center;
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 10px 16px; text-align: center; font-size: 0.9rem;
   }
-  .end-stats .stat .big { font-size: 1.6rem; color: var(--gold); display: block; }
-  .rank-line { text-align: center; font-size: 1.15rem; line-height: 1.6; margin-bottom: 20px; }
+  .end-stats .stat .big { font-size: 1.45rem; color: var(--gold); display: block; }
+  .rank-line { text-align: center; font-size: 1.05rem; line-height: 1.6; margin-bottom: 16px; }
   .rank-name { color: var(--oasis); font-weight: bold; }
-
   .stack { display: grid; gap: 10px; }
 
-  footer {
-    text-align: center;
-    margin-top: 18px;
-    font-size: 0.85rem;
-    opacity: 0.5;
-  }
+  footer { text-align: center; margin-top: 14px; font-size: 0.82rem; opacity: 0.5; }
 </style>
 </head>
 <body>
@@ -322,14 +256,16 @@
   <!-- ============ START / CHARACTER SELECT ============ -->
   <section id="screen-start" class="screen active">
     <h1>✨ Caravan of Wonders ✨</h1>
-    <p class="subtitle">An Arab World Trivia Adventure</p>
-    <p class="arabic">رحلة عبر بلاد العرب</p>
+    <p class="subtitle">A 2D Trivia Adventure Across the Arab World</p>
+    <p class="arabic">من أقصى مدينة في الغرب إلى أقصى مدينة في الشرق</p>
     <div class="panel">
       <p class="intro-text">
-        A great caravan sets out from the gates of Marrakesh, bound for the
-        shores of Muscat. Eight lands lie along the road — each guarded by
-        riddles of its people, places, and history. Answer well and gold will
-        fill your pouch. Answer poorly and the desert takes its toll…
+        A great caravan sets out from <strong>Nouadhibou</strong>, where the Sahara
+        meets the Atlantic — the farthest west of the Arab world — bound for
+        <strong>Sur</strong> on the Arabian Sea, where the sun first touches Arab soil.
+        Eleven lands lie along the road. Walk east, speak with the people you meet,
+        and answer their riddles. Answer well and gold will fill your pouch.
+        Answer poorly and the desert takes its toll…
       </p>
       <p class="intro-text" style="color: var(--gold); margin-bottom: 14px;">Choose your traveler:</p>
       <div class="char-grid" id="char-grid"></div>
@@ -337,79 +273,151 @@
     </div>
   </section>
 
-  <!-- ============ COUNTRY SCENE ============ -->
-  <section id="screen-scene" class="screen">
-    <div class="journey-map" id="map-scene"></div>
-    <div class="panel">
-      <span class="scene-flag" id="scene-flag"></span>
-      <h2 class="scene-country" id="scene-country"></h2>
-      <p class="scene-text" id="scene-text"></p>
-      <button class="btn" id="btn-enter">Step Forward →</button>
-    </div>
-  </section>
-
-  <!-- ============ QUESTION / ENCOUNTER ============ -->
-  <section id="screen-question" class="screen">
+  <!-- ============ GAME ============ -->
+  <section id="screen-game" class="screen">
     <div class="hud">
-      <span class="stat hearts" id="hud-hearts"></span>
+      <span class="stat" id="hud-hearts"></span>
       <span class="stat" id="hud-gold"></span>
-      <span class="stat" id="hud-progress"></span>
+      <span class="stat" id="hud-hints"></span>
+      <span class="stat" id="hud-country"></span>
+      <span class="stat flags" id="hud-flags"></span>
+      <button id="btn-mute" title="Toggle sound">🔊</button>
     </div>
-    <div class="journey-map" id="map-question"></div>
-    <p class="toast" id="toast"></p>
-    <div class="panel">
-      <p class="encounter-text" id="encounter-text"></p>
-      <p class="question-text" id="question-text"></p>
-      <div class="answers" id="answers"></div>
-      <div class="hint-row">
-        <button class="btn secondary" id="btn-hint">🔮 Use a Hint (<span id="hint-count"></span> left)</button>
+
+    <div class="stage" id="stage">
+      <canvas id="game" width="960" height="540"></canvas>
+      <div id="toast"></div>
+
+      <!-- Country arrival -->
+      <div class="overlay" id="overlay-scene">
+        <div class="panel">
+          <span class="scene-flag" id="scene-flag"></span>
+          <h2 class="scene-country" id="scene-country"></h2>
+          <p class="scene-text" id="scene-text"></p>
+          <button class="btn" id="btn-enter">Step Forward →</button>
+        </div>
       </div>
-      <div class="feedback" id="feedback">
-        <span class="verdict" id="feedback-verdict"></span>
-        <span id="feedback-fact"></span>
+
+      <!-- Question / encounter -->
+      <div class="overlay" id="overlay-question">
+        <div class="panel">
+          <p class="enc-persona" id="enc-persona"></p>
+          <p class="encounter-text" id="enc-scene"></p>
+          <p class="question-text" id="q-text"></p>
+          <div class="answers" id="answers"></div>
+          <button class="btn secondary" id="btn-hint">🔮 Use a Hint (<span id="hint-count"></span> left)</button>
+          <div class="feedback" id="feedback">
+            <span class="verdict" id="feedback-verdict"></span>
+            <span id="feedback-fact"></span>
+          </div>
+          <button class="btn" id="btn-next" style="display:none; margin-top: 12px;">Continue →</button>
+        </div>
       </div>
-      <button class="btn" id="btn-next" style="display:none; margin-top: 14px;">Continue the Journey →</button>
+
+      <!-- Game over -->
+      <div class="overlay" id="overlay-gameover">
+        <div class="panel">
+          <span class="end-emoji">🏜️</span>
+          <h2 class="end-title">The Desert Claims Another Traveler</h2>
+          <p class="rank-line" id="go-text"></p>
+          <div class="end-stats">
+            <div class="stat"><span class="big" id="go-gold"></span>gold earned</div>
+            <div class="stat"><span class="big" id="go-countries"></span>lands crossed</div>
+          </div>
+          <div class="stack">
+            <button class="btn" id="btn-retry">⛺ Rest &amp; Retry This Land</button>
+            <button class="btn secondary" id="btn-restart-1">Start a New Journey</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Victory -->
+      <div class="overlay" id="overlay-victory">
+        <div class="panel">
+          <span class="end-emoji">🌅</span>
+          <h2 class="end-title">Sunrise at Sur — You Reached the Far East!</h2>
+          <p class="rank-line" id="v-text"></p>
+          <div class="end-stats">
+            <div class="stat"><span class="big" id="v-gold"></span>gold earned</div>
+            <div class="stat"><span class="big" id="v-correct"></span>riddles solved</div>
+            <div class="stat"><span class="big" id="v-streak"></span>best streak</div>
+          </div>
+          <p class="rank-line">The storytellers will sing of you as<br>
+            <span class="rank-name" id="v-rank"></span><br><span id="v-rank-line"></span></p>
+          <button class="btn" id="btn-restart-2">Begin a New Journey 🐪</button>
+        </div>
+      </div>
     </div>
+
+    <div class="touch-bar">
+      <div class="touch-group">
+        <button class="tbtn" id="t-left">◀</button>
+        <button class="tbtn" id="t-right">▶</button>
+      </div>
+      <div class="touch-group">
+        <button class="tbtn" id="t-jump">⤒</button>
+        <button class="tbtn" id="t-talk">💬</button>
+      </div>
+    </div>
+    <p class="help-line">← → / A D walk &nbsp;·&nbsp; ↑ / W / Space jump &nbsp;·&nbsp; E talk &nbsp;·&nbsp; 1–4 answer</p>
   </section>
 
-  <!-- ============ GAME OVER ============ -->
-  <section id="screen-gameover" class="screen">
-    <div class="panel">
-      <span class="end-emoji">🏜️</span>
-      <h2 class="end-title">The Desert Claims Another Traveler</h2>
-      <p class="rank-line" id="gameover-text"></p>
-      <div class="end-stats">
-        <div class="stat"><span class="big" id="go-gold"></span>gold earned</div>
-        <div class="stat"><span class="big" id="go-countries"></span>lands crossed</div>
-      </div>
-      <div class="stack">
-        <button class="btn" id="btn-retry">⛺ Rest &amp; Retry This Land</button>
-        <button class="btn secondary" id="btn-restart-1">Start a New Journey</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ VICTORY ============ -->
-  <section id="screen-victory" class="screen">
-    <div class="panel">
-      <span class="end-emoji">🏆</span>
-      <h2 class="end-title">You Have Reached Muscat!</h2>
-      <p class="rank-line" id="victory-text"></p>
-      <div class="end-stats">
-        <div class="stat"><span class="big" id="v-gold"></span>gold earned</div>
-        <div class="stat"><span class="big" id="v-correct"></span>riddles solved</div>
-        <div class="stat"><span class="big" id="v-streak"></span>best streak</div>
-      </div>
-      <p class="rank-line">The storytellers will sing of you as<br><span class="rank-name" id="v-rank"></span><br><span id="v-rank-line"></span></p>
-      <button class="btn" id="btn-restart-2">Begin a New Journey 🐪</button>
-    </div>
-  </section>
-
-  <footer>Made with ❤️ — a trivia adventure across the Arab world</footer>
+  <footer>Made with ❤️ — a 2D trivia adventure from the far west to the far east of the Arab world</footer>
 </div>
 
 <script>
 "use strict";
+
+/* =====================================================
+   HELPERS
+   ===================================================== */
+const $ = (id) => document.getElementById(id);
+
+function shuffled(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// deterministic pseudo-random in [0,1) from an integer
+function hash(n) {
+  const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+/* =====================================================
+   SOUND (tiny WebAudio beeps, no assets)
+   ===================================================== */
+let audioCtx = null;
+let soundOn = true;
+
+function beep(freq, dur, type = "triangle", vol = 0.08, delay = 0) {
+  if (!soundOn) return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const t0 = audioCtx.currentTime + delay;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol, t0);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur);
+  } catch (e) { /* audio unavailable — play silently */ }
+}
+
+const sfx = {
+  coin: () => beep(880, 0.09, "triangle", 0.07),
+  correct: () => { beep(523, 0.12); beep(659, 0.12, "triangle", 0.08, 0.1); beep(784, 0.2, "triangle", 0.08, 0.2); },
+  wrong: () => beep(150, 0.35, "sawtooth", 0.06),
+  gate: () => [392, 523, 659, 784].forEach((f, i) => beep(f, 0.16, "triangle", 0.07, i * 0.09)),
+  jump: () => beep(300, 0.06, "square", 0.025),
+};
 
 /* =====================================================
    GAME DATA
@@ -417,51 +425,94 @@
 
 const CHARACTERS = [
   {
-    id: "rashid",
-    emoji: "🧭",
-    name: "Rashid",
-    title: "the Explorer",
+    id: "rashid", name: "Rashid", title: "the Explorer",
     perkLabel: "❤️ Starts with 4 hearts",
     hearts: 4, hints: 1, goldMult: 1, falconSave: false,
+    palette: { skin: "#c68a5a", robe: "#d8c8a8", accent: "#8a5a2a", head: "turban", headC: "#7a4a2a" },
   },
   {
-    id: "layla",
-    emoji: "📜",
-    name: "Layla",
-    title: "the Scholar",
+    id: "layla", name: "Layla", title: "the Scholar",
     perkLabel: "🔮 Carries 3 hints",
     hearts: 3, hints: 3, goldMult: 1, falconSave: false,
+    palette: { skin: "#b87848", robe: "#3a5a9a", accent: "#f3c969", head: "hijab", headC: "#e8e0d0" },
   },
   {
-    id: "omar",
-    emoji: "🪙",
-    name: "Omar",
-    title: "the Merchant",
+    id: "omar", name: "Omar", title: "the Merchant",
     perkLabel: "💰 Earns double gold",
     hearts: 3, hints: 1, goldMult: 2, falconSave: false,
+    palette: { skin: "#a86838", robe: "#3a7a5a", accent: "#f3c969", head: "fez", headC: "#c83a3a" },
   },
   {
-    id: "zahra",
-    emoji: "🦅",
-    name: "Zahra",
-    title: "the Falconer",
+    id: "zahra", name: "Zahra", title: "the Falconer",
     perkLabel: "🦅 Falcon saves her once from doom",
     hearts: 3, hints: 1, goldMult: 1, falconSave: true,
+    palette: { skin: "#c08858", robe: "#6a3a7a", accent: "#2ec4a0", head: "hijab", headC: "#2a2a3a" },
   },
 ];
 
+const NPC_PALETTES = [
+  { skin: "#b87848", robe: "#8a4a3a", accent: "#caa84a", head: "turban", headC: "#e8e0d0" },
+  { skin: "#c68a5a", robe: "#4a6a8a", accent: "#d8d0c0", head: "keffiyeh", headC: "#f0ece0" },
+  { skin: "#a86838", robe: "#7a6a3a", accent: "#3a5a4a", head: "turban", headC: "#caa84a" },
+  { skin: "#c08858", robe: "#5a3a6a", accent: "#f3c969", head: "hijab", headC: "#d8d0c0" },
+  { skin: "#b87848", robe: "#3a6a5a", accent: "#caa84a", head: "fez", headC: "#b83a3a" },
+  { skin: "#c68a5a", robe: "#6a4a2a", accent: "#e8e0d0", head: "keffiyeh", headC: "#ffffff" },
+];
+
 /*
-  Each country: flag, name, arrival scene, and 3 encounters.
-  Each encounter: scene (adventure framing), question, options,
-  answer (index into options), fact (shown after answering).
-  Options are shuffled at render time, so answer order here doesn't matter.
+  Each country: flag, name, arabic, arrival scene, a 2D world theme, and 3 encounters.
+  The journey runs west → east: Nouadhibou (Mauritania) to Sur (Oman).
+  decor entries: [type, fraction-of-level-width, optional-variant]
 */
 const COUNTRIES = [
   {
-    flag: "🇲🇦", name: "Morocco", arabic: "المغرب",
-    scene: "Your caravan gathers in Marrakesh as the sun sets over Jemaa el-Fnaa square. Snake charmers pack away their flutes, and the smell of grilled meats and mint tea fills the air. An old storyteller waves you over to his lantern-lit circle. “Before you may join the caravan east,” he says, “you must prove you know the lands you walk.”",
+    flag: "🇲🇷", name: "Mauritania", arabic: "موريتانيا",
+    scene: "Your journey begins at the farthest western edge of the Arab world: Nouadhibou, Mauritania, where the dunes of the Sahara tumble straight into the Atlantic Ocean. Fishermen haul painted boats up the beach, and behind them the longest train you have ever seen rumbles in from the desert. An old tea-maker waves you to his mat and pours mint tea from high in the air. “Drink, traveler,” he smiles. “The road east is longer than that train. Show me you are ready for it.”",
+    theme: {
+      sky: ["#4a78a8", "#f0d8a8"], celestial: { type: "sun", x: 760, y: 120, r: 34 },
+      far: { type: "dunes", color: "#b89060" }, sea: "#2a6a9a",
+      ground: "#d8b878", groundDark: "#ad8c54",
+      decor: [["train", 0.10], ["tent", 0.30], ["palm", 0.42], ["dune", 0.55], ["palm", 0.68], ["tent", 0.80]],
+    },
     encounters: [
       {
+        persona: "Tea Maker",
+        scene: "The tea-maker pours a third glass, foam rising like sea-froth. “First — show me you know whose land you stand in.”",
+        question: "What is the capital of Mauritania?",
+        options: ["Nouakchott", "Nouadhibou", "Atar", "Rosso"],
+        answer: 0,
+        fact: "Nouakchott grew from a small fishing village in 1958 into a capital of well over a million people — one of the youngest capitals in the Arab world.",
+      },
+      {
+        persona: "Train Driver",
+        scene: "A train of more than two hundred cars thunders past, shaking the ground. The driver leans out of the locomotive and shouts over the roar…",
+        question: "Mauritania's famous desert train — one of the longest trains on Earth — carries what across the Sahara?",
+        options: ["Iron ore", "Dates", "Salt", "Camels"],
+        answer: 0,
+        fact: "The train runs ~700 km from the Zouérat mines to Nouadhibou and can stretch 2.5 km long — daring travelers ride for free on top of the ore.",
+      },
+      {
+        persona: "Desert Librarian",
+        scene: "At a caravan stop, a robed scholar opens a chest and shows you pages of golden calligraphy older than empires.",
+        question: "Which ancient caravan city in Mauritania is famous for its desert libraries of manuscripts?",
+        options: ["Chinguetti", "Timbuktu", "Aleg", "Kiffa"],
+        answer: 0,
+        fact: "Chinguetti's family-run libraries have preserved Quranic and scientific manuscripts since the 13th century — the city is a UNESCO World Heritage site.",
+      },
+    ],
+  },
+  {
+    flag: "🇲🇦", name: "Morocco", arabic: "المغرب",
+    scene: "The caravan rolls north along the coast and into Morocco. By the time you reach Marrakesh, the sun is setting over Jemaa el-Fnaa square — snake charmers pack away their flutes, and the smell of grilled meats and mint tea fills the air. An old storyteller waves you over to his lantern-lit circle. “Before you may pass east,” he says, “you must prove you know the lands you walk.”",
+    theme: {
+      sky: ["#2a1a4a", "#e8833a"], celestial: { type: "sun", x: 700, y: 290, r: 46, sunset: true },
+      far: { type: "mountains", color: "#4a2c5e", snow: true }, sea: null,
+      ground: "#c08858", groundDark: "#96693f",
+      decor: [["minaret", 0.16], ["stall", 0.32], ["palm", 0.44], ["stall", 0.60], ["palm", 0.72], ["palm", 0.84]],
+    },
+    encounters: [
+      {
+        persona: "Storyteller",
         scene: "The storyteller strokes his beard and leans in close. “First, a simple test. Many travelers confuse our great cities…”",
         question: "What is the capital city of Morocco?",
         options: ["Rabat", "Casablanca", "Marrakesh", "Fez"],
@@ -469,6 +520,7 @@ const COUNTRIES = [
         fact: "Casablanca is Morocco's largest city, but Rabat has been the capital since 1912.",
       },
       {
+        persona: "Young Guide",
         scene: "A young guide offers to show you a hidden gem in the Rif Mountains. “It is a city the color of the sky itself,” she whispers.",
         question: "Which Moroccan city is famous for its blue-painted streets and walls?",
         options: ["Chefchaouen", "Tangier", "Agadir", "Meknes"],
@@ -476,6 +528,7 @@ const COUNTRIES = [
         fact: "Chefchaouen's old town is washed almost entirely in shades of blue — a tradition said to date back centuries.",
       },
       {
+        persona: "Caravan Cook",
         scene: "Before you depart, the caravan cook serves a farewell feast from a cone-lidded clay pot, steam curling into the night air.",
         question: "Which slow-cooked Moroccan dish shares its name with the clay pot it is cooked in?",
         options: ["Tagine", "Couscous", "Harira", "Pastilla"],
@@ -485,10 +538,53 @@ const COUNTRIES = [
     ],
   },
   {
-    flag: "🇹🇳", name: "Tunisia", arabic: "تونس",
-    scene: "After days along the coast road, white-washed villages with sky-blue doors appear on the cliffs. You have reached Tunisia. A fisherman mending his nets calls out: “Travelers! These shores have seen empires rise and fall. Do you know whose ghosts walk here?”",
+    flag: "🇩🇿", name: "Algeria", arabic: "الجزائر",
+    scene: "East again, into Algeria — a giant of a country. The white terraces of Algiers tumble down green hills to a glittering bay, and laundry lines flutter like flags between the old casbah walls. A musician tuning his oud calls from a café doorway: “You walk far, stranger! But do you know the giant whose soil you cross?”",
+    theme: {
+      sky: ["#3a88c8", "#cfe8f8"], celestial: { type: "sun", x: 720, y: 100, r: 36 },
+      far: { type: "mountains", color: "#5a7a9a" }, sea: "#2a78b8",
+      ground: "#e0d0a8", groundDark: "#b5a378",
+      decor: [["houseWhite", 0.14], ["minaret", 0.28], ["houseWhite", 0.44], ["palm", 0.58], ["houseWhite", 0.70], ["palm", 0.82]],
+    },
     encounters: [
       {
+        persona: "Oud Player",
+        scene: "The musician plucks a bright run of notes. “A song for an answer, traveler. Name the white city by the bay — our capital.”",
+        question: "What is the capital of Algeria?",
+        options: ["Algiers", "Oran", "Constantine", "Annaba"],
+        answer: 0,
+        fact: "Algiers is nicknamed 'Alger la Blanche' — Algiers the White — for the whitewashed buildings that cascade down to the Mediterranean.",
+      },
+      {
+        persona: "Tuareg Nomad",
+        scene: "South of the coast, the land opens into an ocean of sand and stone that seems to have no end. A blue-veiled nomad rides up beside you.",
+        question: "Algeria holds which record among all African and Arab countries?",
+        options: ["Largest country by area", "Most people", "Longest river", "Highest mountain"],
+        answer: 0,
+        fact: "At over 2.3 million km², Algeria is the largest country in both Africa and the Arab world — more than four times the size of France.",
+      },
+      {
+        persona: "Bridge Keeper",
+        scene: "You reach a city perched impossibly on the edge of a deep gorge, its neighborhoods stitched together by bridges hanging in the air.",
+        question: "Which Algerian city, built above a dramatic gorge, is famous as the City of Bridges?",
+        options: ["Constantine", "Tlemcen", "Béjaïa", "Ghardaïa"],
+        answer: 0,
+        fact: "Constantine's bridges span the Rhumel gorge — the city has been continuously inhabited for over 2,500 years.",
+      },
+    ],
+  },
+  {
+    flag: "🇹🇳", name: "Tunisia", arabic: "تونس",
+    scene: "After days along the coast road, white-washed villages with sky-blue doors appear on the cliffs. You have reached Tunisia. A fisherman mending his nets calls out: “Travelers! These shores have seen empires rise and fall. Do you know whose ghosts walk here?”",
+    theme: {
+      sky: ["#3aa0d8", "#bfe6f5"], celestial: { type: "sun", x: 740, y: 95, r: 36 },
+      far: { type: "dunes", color: "#d8c8a0" }, sea: "#2a88c8",
+      ground: "#e8d8b0", groundDark: "#bfae84",
+      decor: [["houseTN", 0.15], ["houseTN", 0.30], ["palm", 0.42], ["dhow", 0.55], ["houseTN", 0.68], ["palm", 0.80]],
+    },
+    encounters: [
+      {
+        persona: "Fisherman",
         scene: "The fisherman points to ancient ruins crowning a hill above the bay. “Hannibal himself set sail from that city to challenge Rome,” he says.",
         question: "The ruins of ancient Carthage lie just outside which modern capital city?",
         options: ["Tunis", "Tripoli", "Algiers", "Sousse"],
@@ -496,6 +592,7 @@ const COUNTRIES = [
         fact: "Carthage, once Rome's greatest rival, sits on the outskirts of modern Tunis and is now a UNESCO World Heritage site.",
       },
       {
+        persona: "Old Sailor",
         scene: "You climb the cliffs at dawn. Endless blue water stretches to the horizon, dotted with fishing boats heading north.",
         question: "Which sea washes the northern coast of Tunisia?",
         options: ["The Mediterranean Sea", "The Red Sea", "The Arabian Sea", "The Atlantic Ocean"],
@@ -503,6 +600,7 @@ const COUNTRIES = [
         fact: "Tunisia sits at the heart of the Mediterranean — its northern tip is closer to Sicily than to many Arab capitals.",
       },
       {
+        persona: "Desert Guide",
         scene: "In the southern desert you pass cave dwellings carved into the earth. Your guide grins: “Filmmakers came from across the world to shoot a famous space saga here.”",
         question: "Which southern Tunisian town lent its name to Luke Skywalker's home planet in Star Wars?",
         options: ["Tataouine", "Matmata", "Douz", "Tozeur"],
@@ -512,10 +610,53 @@ const COUNTRIES = [
     ],
   },
   {
-    flag: "🇪🇬", name: "Egypt", arabic: "مصر",
-    scene: "The caravan crosses into Egypt, and on the third evening you see them — the Pyramids, glowing amber in the sunset. A riverboat captain offers passage. “The Mother of the World welcomes you,” he laughs, “but her riddles are as old as the pharaohs.”",
+    flag: "🇱🇾", name: "Libya", arabic: "ليبيا",
+    scene: "The road bends along the Mediterranean into Libya. Heat shimmers over marble ruins standing white against the sea, and the cry of gulls mixes with wind off the dunes. A guardian of the old stones raises his staff as you approach. “Few caravans pass these days,” he says. “Prove you honor what still stands here.”",
+    theme: {
+      sky: ["#c89858", "#f0e0b0"], celestial: { type: "sun", x: 690, y: 90, r: 40 },
+      far: { type: "dunes", color: "#c8a868" }, sea: "#3a88a8",
+      ground: "#e8d098", groundDark: "#bca96f",
+      decor: [["columns", 0.18], ["columns", 0.30], ["palm", 0.46], ["houseWhite", 0.60], ["dune", 0.74], ["columns", 0.85]],
+    },
     encounters: [
       {
+        persona: "Guardian of Ruins",
+        scene: "The guardian leads you through a triumphal arch into streets of marble, a theatre facing the open sea. “An emperor was born here,” he says, “and made it the jewel of Africa.”",
+        question: "Which grand ancient Roman city stands on Libya's Mediterranean coast?",
+        options: ["Leptis Magna", "Palmyra", "Jerash", "Volubilis"],
+        answer: 0,
+        fact: "Leptis Magna is one of the best-preserved Roman cities in the world — Emperor Septimius Severus, born there, filled it with monuments.",
+      },
+      {
+        persona: "Date Farmer",
+        scene: "In a grove heavy with dates, a farmer fills your saddlebags for the road. “Heading east? You will pass our capital on the sea — three cities in one, the Greeks called it.”",
+        question: "What is the capital of Libya?",
+        options: ["Tripoli", "Benghazi", "Misrata", "Sirte"],
+        answer: 0,
+        fact: "Tripoli's name comes from the Greek 'Tripolis' — 'three cities' — and its walled medina still stands beside the harbor.",
+      },
+      {
+        persona: "Oasis Keeper",
+        scene: "Deep inland, you shelter from the heat in a town of covered alleys and whitewashed rooftops, cool as a cave at noon.",
+        question: "Which Libyan oasis town is known as the Pearl of the Desert?",
+        options: ["Ghadames", "Sabha", "Kufra", "Tobruk"],
+        answer: 0,
+        fact: "Ghadames' covered walkways and white houses keep it cool in the Saharan heat — the old town is a UNESCO World Heritage site.",
+      },
+    ],
+  },
+  {
+    flag: "🇪🇬", name: "Egypt", arabic: "مصر",
+    scene: "The caravan crosses into Egypt, and on the third evening you see them — the Pyramids, glowing amber in the sunset. A riverboat captain offers passage. “The Mother of the World welcomes you,” he laughs, “but her riddles are as old as the pharaohs.”",
+    theme: {
+      sky: ["#e8a33d", "#f7dca0"], celestial: { type: "sun", x: 730, y: 110, r: 40 },
+      far: { type: "pyramids", color: "#b8863a" }, sea: "#3a78a8",
+      ground: "#dfc07a", groundDark: "#b59a58",
+      decor: [["obelisk", 0.18], ["palm", 0.30], ["pyramid", 0.46], ["palm", 0.60], ["obelisk", 0.72], ["palm", 0.84]],
+    },
+    encounters: [
+      {
+        persona: "Boat Captain",
         scene: "The captain steers his felucca along a mighty waterway crowded with boats. “Without this river,” he says, “there would be no Egypt at all.”",
         question: "Which river, the lifeline of Egypt, is among the longest in the world?",
         options: ["The Nile", "The Euphrates", "The Tigris", "The Jordan"],
@@ -523,6 +664,7 @@ const COUNTRIES = [
         fact: "Over 95% of Egyptians live along the Nile, though the river valley covers only a small fraction of the country's land.",
       },
       {
+        persona: "Temple Guard",
         scene: "You dismount at the foot of the Great Pyramid. A guard in a white turban blocks the path with his staff and smiles.",
         question: "On which plateau do the Great Pyramid and the Sphinx stand?",
         options: ["The Giza Plateau", "The Sinai Plateau", "The Aswan Plateau", "The Luxor Plateau"],
@@ -530,6 +672,7 @@ const COUNTRIES = [
         fact: "The Great Pyramid of Giza is the only one of the Seven Wonders of the Ancient World still standing.",
       },
       {
+        persona: "Old Scribe",
         scene: "Inside a temple, your torch lights up walls covered in carvings — birds, eyes, serpents, and suns arranged in careful rows.",
         question: "What is the ancient Egyptian writing system of pictures and symbols called?",
         options: ["Hieroglyphics", "Cuneiform", "Calligraphy", "Runes"],
@@ -541,8 +684,15 @@ const COUNTRIES = [
   {
     flag: "🇯🇴", name: "Jordan", arabic: "الأردن",
     scene: "East across the Sinai and into Jordan, where red desert cliffs rise like castle walls. A Bedouin rider on a grey mare appears beside the caravan. “You ride through the land of ancient traders,” he says. “Let us see if you are worthy of its secrets.”",
+    theme: {
+      sky: ["#9a4a3a", "#e8b48a"], celestial: { type: "sun", x: 700, y: 120, r: 38 },
+      far: { type: "canyon", color: "#6a2c3a" }, sea: null,
+      ground: "#c97a5a", groundDark: "#9c5b41",
+      decor: [["rock", 0.14], ["rock", 0.28], ["petra", 0.46], ["rock", 0.64], ["rock", 0.80]],
+    },
     encounters: [
       {
+        persona: "Bedouin Rider",
         scene: "The rider leads you through a narrow canyon barely wide enough for two camels. Suddenly the rock opens — and a carved palace face glows rose-red before you.",
         question: "What is the name of this ancient city carved into rose-red rock?",
         options: ["Petra", "Palmyra", "Jerash", "Babylon"],
@@ -550,13 +700,15 @@ const COUNTRIES = [
         fact: "Petra was the capital of the Nabataean kingdom and is one of the New Seven Wonders of the World.",
       },
       {
-        scene: "At dusk you camp by a strange, still sea. The Bedouin floats on his back in the water, reading a scroll, completely unsinkable.",
+        persona: "Bedouin Elder",
+        scene: "At dusk you camp by a strange, still sea. An elder floats on his back in the water, reading a scroll, completely unsinkable.",
         question: "Which salt lake, the lowest point on Earth's surface, lets swimmers float without effort?",
         options: ["The Dead Sea", "The Red Sea", "Lake Tiberias", "The Caspian Sea"],
         answer: 0,
         fact: "The Dead Sea's shore lies about 430 meters below sea level, and its water is nearly ten times saltier than the ocean.",
       },
       {
+        persona: "City Merchant",
         scene: "The caravan resupplies in a hillside city of white stone houses, where Roman ruins stand beside busy modern streets.",
         question: "What is the capital of Jordan?",
         options: ["Amman", "Aqaba", "Irbid", "Zarqa"],
@@ -568,8 +720,15 @@ const COUNTRIES = [
   {
     flag: "🇱🇧", name: "Lebanon", arabic: "لبنان",
     scene: "A detour north brings you to Lebanon, where snow-capped mountains tumble down to a sparkling sea. In a village café, a poet pours you coffee. “Small land, endless stories,” she says. “Answer my questions and the mountain roads will open to you.”",
+    theme: {
+      sky: ["#3a78c8", "#cfe8f8"], celestial: { type: "sun", x: 730, y: 95, r: 34 },
+      far: { type: "mountains", color: "#5a7a9a", snow: true }, sea: "#2a78c8",
+      ground: "#a8b888", groundDark: "#82905f",
+      decor: [["cedar", 0.16], ["cedar", 0.33], ["houseWhite", 0.48], ["cedar", 0.64], ["cedar", 0.80]],
+    },
     encounters: [
       {
+        persona: "Poet",
         scene: "The poet points up the mountainside to a grove of ancient, wide-armed trees standing in the snow.",
         question: "Which tree, a national symbol for thousands of years, appears on Lebanon's flag?",
         options: ["The Cedar", "The Palm", "The Olive", "The Fig"],
@@ -577,13 +736,15 @@ const COUNTRIES = [
         fact: "The Cedars of Lebanon were prized by ancient empires for shipbuilding and temples — some surviving trees are over 1,000 years old.",
       },
       {
-        scene: "You descend to a lively seaside city of cafés, bookshops, and music drifting from balconies. “They call her the city that refuses to die,” the poet says proudly.",
+        persona: "Bookseller",
+        scene: "You descend to a lively seaside city of cafés, bookshops, and music drifting from balconies. “They call her the city that refuses to die,” a bookseller says proudly.",
         question: "What is the capital of Lebanon?",
         options: ["Beirut", "Tripoli", "Sidon", "Byblos"],
         answer: 0,
         fact: "Beirut has been destroyed and rebuilt many times over its 5,000-year history, earning it the nickname 'the Phoenix city'.",
       },
       {
+        persona: "Byblos Fisherman",
         scene: "In the port of Byblos, fishermen show you purple-stained shells and fragments of the oldest writing you have ever seen.",
         question: "Which ancient seafaring people from Lebanon's coast spread the first alphabet across the Mediterranean?",
         options: ["The Phoenicians", "The Sumerians", "The Assyrians", "The Hittites"],
@@ -595,8 +756,15 @@ const COUNTRIES = [
   {
     flag: "🇸🇦", name: "Saudi Arabia", arabic: "السعودية",
     scene: "Now begins the greatest test: the crossing of Arabia. Dunes tower like mountains of gold, and the stars at night seem close enough to touch. A desert guide joins you, his camel laden with water skins. “The sands forgive nothing,” he warns, “but they reward the wise.”",
+    theme: {
+      sky: ["#0d1030", "#2a2050"], celestial: { type: "moon", x: 740, y: 95, r: 30, stars: true },
+      far: { type: "dunes", color: "#1a1438" }, sea: null,
+      ground: "#4a3868", groundDark: "#352647",
+      decor: [["dune", 0.14], ["tent", 0.30], ["dune", 0.46], ["tent", 0.62], ["skyscraper", 0.80, 1], ["skyscraper", 0.86, 2]],
+    },
     encounters: [
       {
+        persona: "Desert Guide",
         scene: "For three days you see nothing but a sea of sand in every direction. “Do you know what they call this place?” the guide asks quietly.",
         question: "What is the vast desert covering much of southern Saudi Arabia, the largest sand desert on Earth?",
         options: ["The Rub' al Khali (Empty Quarter)", "The Sahara", "The Gobi", "The An-Nafud"],
@@ -604,13 +772,15 @@ const COUNTRIES = [
         fact: "The Rub' al Khali, or 'Empty Quarter', covers around 650,000 km² — larger than France — with dunes up to 250 meters tall.",
       },
       {
-        scene: "You pass pilgrims in white garments, all walking the same direction with shining eyes. “They have traveled from every corner of the world,” says the guide.",
+        persona: "Caravan Elder",
+        scene: "You pass pilgrims in white garments, all walking the same direction with shining eyes. “They have traveled from every corner of the world,” says the elder.",
         question: "Which holy city do millions of Muslim pilgrims travel to each year for the Hajj?",
         options: ["Mecca", "Medina", "Jeddah", "Taif"],
         answer: 0,
         fact: "The Hajj pilgrimage to Mecca is one of the five pillars of Islam, drawing around two million pilgrims every year.",
       },
       {
+        persona: "Tower Guide",
         scene: "At last, towers of glass rise from the desert haze — a vast modern city built where oasis settlements once stood.",
         question: "What is the capital of Saudi Arabia?",
         options: ["Riyadh", "Jeddah", "Dammam", "Abha"],
@@ -622,8 +792,15 @@ const COUNTRIES = [
   {
     flag: "🇦🇪", name: "United Arab Emirates", arabic: "الإمارات",
     scene: "The caravan reaches the Gulf coast, where fishing villages of old have become cities of mirrored towers. A pearl diver turned businessman laughs at your dusty clothes. “From sand to skyline in one lifetime! But tell me — do you truly know this land?”",
+    theme: {
+      sky: ["#2a1a5a", "#c85a8a"], celestial: { type: "sun", x: 690, y: 270, r: 42, sunset: true },
+      far: { type: "skyline", color: "#1a1240" }, sea: "#3a4a8a",
+      ground: "#d8b888", groundDark: "#ab8d62",
+      decor: [["palm", 0.18], ["skyscraper", 0.34, 1], ["skyscraper", 0.41, 3], ["palm", 0.54], ["skyscraper", 0.70, 2], ["palm", 0.82]],
+    },
     encounters: [
       {
+        persona: "Pearl Diver",
         scene: "He points upward — and up, and up. A silver needle of a building pierces the clouds themselves.",
         question: "What is the name of the world's tallest building, standing in Dubai?",
         options: ["Burj Khalifa", "Burj Al Arab", "Etihad Tower", "Kingdom Tower"],
@@ -631,13 +808,15 @@ const COUNTRIES = [
         fact: "The Burj Khalifa rises 828 meters — on a clear day, you can watch the sunset from the base, ride up, and watch it set again.",
       },
       {
-        scene: "“Many visitors think the famous city of towers is our capital,” the diver chuckles, “but they are mistaken.”",
+        persona: "City Guide",
+        scene: "“Many visitors think the famous city of towers is our capital,” your guide chuckles, “but they are mistaken.”",
         question: "What is the capital of the United Arab Emirates?",
         options: ["Abu Dhabi", "Dubai", "Sharjah", "Ajman"],
         answer: 0,
         fact: "Abu Dhabi is both the capital and the largest emirate, covering about 87% of the UAE's total land area.",
       },
       {
+        persona: "Majlis Host",
         scene: "In a majlis carpeted with fine rugs, seven coffee cups are set in a circle. “One for each founding brother of this union,” your host explains.",
         question: "How many emirates make up the United Arab Emirates?",
         options: ["Seven", "Five", "Six", "Nine"],
@@ -648,9 +827,16 @@ const COUNTRIES = [
   },
   {
     flag: "🇴🇲", name: "Oman", arabic: "عُمان",
-    scene: "The final road winds between jagged mountains and a turquoise sea. The air smells of salt and something sweeter — incense. An Omani sailor welcomes the caravan at the city gates. “Muscat lies before you, traveler. Three last riddles stand between you and glory.”",
+    scene: "The final road winds between jagged mountains and a turquoise sea. The air smells of salt and something sweeter — incense. An Omani sailor welcomes the caravan at the gates of Muscat. “The end of your road lies beyond, traveler: Sur, the far east of the Arab world, where the sun rises first. Three last riddles stand between you and the dawn.”",
+    theme: {
+      sky: ["#3a9ab8", "#f0e8c8"], celestial: { type: "sun", x: 830, y: 250, r: 44, sunset: true },
+      far: { type: "mountains", color: "#6a7a72" }, sea: "#2a8898",
+      ground: "#d8c8a0", groundDark: "#ac9d77",
+      decor: [["fort", 0.22], ["dhow", 0.38], ["palm", 0.52], ["incense", 0.64], ["houseWhite", 0.76], ["dhow", 0.88]],
+    },
     encounters: [
       {
+        persona: "Omani Sailor",
         scene: "White houses and ancient Portuguese forts curve around a glittering harbor where wooden dhows bob at anchor.",
         question: "What is the capital of Oman?",
         options: ["Muscat", "Salalah", "Nizwa", "Sur"],
@@ -658,125 +844,840 @@ const COUNTRIES = [
         fact: "Muscat has been a vital trading port between East and West for over 2,000 years, guarded by its twin 16th-century forts.",
       },
       {
-        scene: "In the souq, the sailor holds a chunk of pale golden resin over a burner. Fragrant smoke curls around you. “For thousands of years, this was worth more than gold.”",
+        persona: "Souq Merchant",
+        scene: "In the souq, a merchant holds a chunk of pale golden resin over a burner. Fragrant smoke curls around you. “For thousands of years, this was worth more than gold.”",
         question: "Which fragrant tree resin has Oman famously traded since ancient times?",
         options: ["Frankincense", "Myrrh", "Amber", "Sandalwood"],
         answer: 0,
         fact: "Omani frankincense from Dhofar was carried along ancient trade routes to Rome, Persia, and China — the 'Land of Frankincense' is a UNESCO site.",
       },
       {
-        scene: "At the celebration feast, the sultan's guard wears a magnificent curved blade at his belt — the same shape you've seen on Oman's flag.",
-        question: "What is the traditional curved Omani dagger, a national symbol, called?",
-        options: ["The Khanjar", "The Scimitar", "The Jambiya", "The Saif"],
+        persona: "Shipwright of Sur",
+        scene: "In Sur's shipyard before dawn, a shipwright planes a great wooden hull by hand, as his fathers did for a thousand years. Behind him, the sky over Ras al-Hadd begins to glow.",
+        question: "Sur is famous for hand-building which traditional Arab sailing ships?",
+        options: ["Dhows", "Feluccas", "Junks", "Galleys"],
         answer: 0,
-        fact: "The khanjar appears on Oman's national emblem and flag, and is still worn with pride at formal occasions.",
+        fact: "Sur's shipyards have built wooden dhows for centuries — and at nearby Ras al-Hadd, the easternmost cape, the sun rises on the Arab world before anywhere else.",
       },
     ],
   },
 ];
 
 const RANKS = [
-  { min: 0.95, name: "The Legend of the Caravan 🌟", line: "Storytellers from Marrakesh to Muscat will speak your name for generations." },
+  { min: 0.95, name: "The Legend of the Caravan 🌟", line: "Storytellers from Nouadhibou to Sur will speak your name for generations." },
   { min: 0.8, name: "Master Navigator of the Sands 🐪", line: "Few travelers know these lands as well as you." },
   { min: 0.6, name: "Seasoned Wayfarer 🗺️", line: "You stumbled here and there, but the road respects you." },
   { min: 0.0, name: "Brave Wanderer 🌙", line: "You survived the journey — next time, the riddles will fear YOU." },
 ];
 
 const GOLD_PER_CORRECT = 10;
-const STREAK_BONUS = 5; // extra gold per correct answer while streak >= 3
+const STREAK_BONUS = 5;   // extra gold per correct answer while streak >= 3
+const COIN_VALUE = 2;
 
 /* =====================================================
-   GAME STATE
+   STATE
    ===================================================== */
-
 const state = {
   character: null,
   hearts: 0,
   hints: 0,
   gold: 0,
   countryIndex: 0,
-  encounterIndex: 0,
   correct: 0,
   streak: 0,
   bestStreak: 0,
   falconUsed: false,
   hintUsedThisQuestion: false,
-  countryStart: null, // snapshot for "retry this land"
+  countryStart: null,
 };
 
 /* =====================================================
-   HELPERS
+   2D ENGINE
    ===================================================== */
+const W = 960, H = 540, GROUND = 458, HORIZON = 330;
+const LEVEL_W = 2600;
+const cvs = $("game");
+const ctx = cvs.getContext("2d");
 
-const $ = (id) => document.getElementById(id);
+const input = { left: false, right: false };
+const player = { x: 120, y: GROUND, vy: 0, onGround: true, facing: 1, walkPhase: 0 };
+let level = null;          // current level data
+let camX = 0;
+let T = 0;                 // global animation clock (seconds)
+let openOverlays = 0;      // pause world while any overlay is open
+let fade = 0;              // 0..1 screen fade
+let fading = null;         // {dir: 1|-1, onBlack: fn}
 
-function show(screenId) {
-  document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
-  $(screenId).classList.add("active");
-  window.scrollTo({ top: 0, behavior: "smooth" });
+const paused = () => openOverlays > 0 || fading !== null;
+
+/* ---- level construction ---- */
+function buildLevel(ci) {
+  const c = COUNTRIES[ci];
+  const npcs = c.encounters.map((enc, i) => ({
+    enc,
+    x: LEVEL_W * (0.30 + i * 0.22),
+    palette: NPC_PALETTES[(ci * 3 + i) % NPC_PALETTES.length],
+    done: false,
+  }));
+  const coins = [];
+  for (let i = 0; i < 10; i++) {
+    const x = 260 + i * (LEVEL_W - 600) / 9 + hash(ci * 100 + i) * 80;
+    const high = i % 3 === 2; // every third coin needs a jump
+    coins.push({ x, y: high ? GROUND - 100 : GROUND - 18, got: false });
+  }
+  return {
+    country: c, ci,
+    theme: c.theme,
+    npcs, coins,
+    gateX: LEVEL_W - 170,
+  };
 }
 
-function shuffled(arr) {
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+function gateOpen() {
+  return level && level.npcs.every((n) => n.done);
+}
+
+/* ---- drawing: people ---- */
+// feet at (0,0), drawn upward; caller translates/flips
+function drawPersonShape(c, p, phase) {
+  const step = Math.sin(phase) * 5;
+  // feet
+  c.fillStyle = "#3a2a1e";
+  c.fillRect(-8 + step, -6, 7, 6);
+  c.fillRect(1 - step, -6, 7, 6);
+  // robe
+  c.fillStyle = p.robe;
+  c.beginPath();
+  c.moveTo(-13, -4); c.lineTo(13, -4); c.lineTo(8, -38); c.lineTo(-8, -38);
+  c.closePath(); c.fill();
+  // belt
+  c.fillStyle = p.accent;
+  c.fillRect(-9, -26, 18, 4);
+  // arms
+  const arm = Math.sin(phase) * 5;
+  c.strokeStyle = p.robe;
+  c.lineWidth = 5;
+  c.beginPath(); c.moveTo(-7, -34); c.lineTo(-11, -19 + arm); c.stroke();
+  c.beginPath(); c.moveTo(7, -34); c.lineTo(11, -19 - arm); c.stroke();
+  c.fillStyle = p.skin;
+  c.beginPath(); c.arc(-11, -17 + arm, 2.6, 0, 7); c.fill();
+  c.beginPath(); c.arc(11, -17 - arm, 2.6, 0, 7); c.fill();
+  // head
+  c.beginPath(); c.arc(0, -45, 7.5, 0, 7); c.fill();
+  // eyes (facing right pre-flip)
+  c.fillStyle = "#241a12";
+  c.fillRect(2, -47, 2, 2);
+  c.fillRect(6, -47, 2, 2);
+  // headwear
+  if (p.head === "turban") {
+    c.fillStyle = p.headC;
+    c.beginPath(); c.arc(0, -47, 8.5, Math.PI, 0); c.fill();
+    c.beginPath(); c.arc(0, -53, 4, 0, 7); c.fill();
+  } else if (p.head === "hijab") {
+    c.fillStyle = p.headC;
+    c.beginPath(); c.arc(0, -46, 8.8, Math.PI * 0.85, Math.PI * 0.15); c.fill();
+    c.fillRect(-8.5, -46, 4, 12);
+    c.fillRect(4.5, -46, 4, 12);
+  } else if (p.head === "keffiyeh") {
+    c.fillStyle = p.headC;
+    c.beginPath(); c.arc(0, -46, 8.6, Math.PI * 0.9, Math.PI * 0.1); c.fill();
+    c.fillRect(-8.5, -46, 3.6, 14);
+    c.fillStyle = "#2a2a2a";
+    c.fillRect(-8, -50, 16, 2.6);
+  } else if (p.head === "fez") {
+    c.fillStyle = p.headC;
+    c.fillRect(-5.5, -58, 11, 9);
+    c.strokeStyle = "#2a2a2a"; c.lineWidth = 1.4;
+    c.beginPath(); c.moveTo(0, -58); c.lineTo(5, -62); c.stroke();
   }
-  return a;
+}
+
+function drawPerson(x, y, palette, phase, facing) {
+  ctx.save();
+  ctx.translate(x, y);
+  if (facing < 0) ctx.scale(-1, 1);
+  drawPersonShape(ctx, palette, phase);
+  ctx.restore();
+}
+
+function drawFalcon(x, y, t) {
+  ctx.save();
+  ctx.translate(x, y);
+  const flap = Math.sin(t * 9) * 8;
+  ctx.fillStyle = "#6a4a2a";
+  ctx.beginPath(); ctx.ellipse(0, 0, 7, 3.5, 0, 0, 7); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(-2, -1); ctx.lineTo(-13, -5 - flap); ctx.lineTo(-4, 1);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(2, -1); ctx.lineTo(13, -5 - flap); ctx.lineTo(4, 1);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#e8c860";
+  ctx.fillRect(6, -1.5, 3, 2);
+  ctx.restore();
+}
+
+/* ---- drawing: scenery ---- */
+function drawCelestial(th, t) {
+  const ce = th.celestial;
+  if (ce.stars) {
+    for (let i = 0; i < 80; i++) {
+      const sx = hash(i * 3.7) * W;
+      const sy = hash(i * 7.3) * (HORIZON - 40);
+      const tw = 0.4 + 0.6 * Math.abs(Math.sin(t * 1.5 + i));
+      ctx.fillStyle = `rgba(240,235,255,${tw * 0.85})`;
+      ctx.fillRect(sx, sy, 2, 2);
+    }
+  }
+  ctx.save();
+  if (ce.type === "sun") {
+    const glow = ctx.createRadialGradient(ce.x, ce.y, 4, ce.x, ce.y, ce.r * 2.6);
+    glow.addColorStop(0, ce.sunset ? "rgba(255,180,90,0.9)" : "rgba(255,240,180,0.9)");
+    glow.addColorStop(1, "rgba(255,200,100,0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(ce.x - ce.r * 3, ce.y - ce.r * 3, ce.r * 6, ce.r * 6);
+    ctx.fillStyle = ce.sunset ? "#ffb45a" : "#fff3c0";
+    ctx.beginPath(); ctx.arc(ce.x, ce.y, ce.r, 0, 7); ctx.fill();
+  } else { // moon
+    ctx.fillStyle = "#f0ecd8";
+    ctx.beginPath(); ctx.arc(ce.x, ce.y, ce.r, 0, 7); ctx.fill();
+    ctx.fillStyle = th.sky[0];
+    ctx.beginPath(); ctx.arc(ce.x - 11, ce.y - 7, ce.r * 0.82, 0, 7); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawFar(th, t) {
+  const f = th.far;
+  if (!f) return;
+  const off = camX * 0.25;
+  ctx.save();
+  ctx.translate(-off, 0);
+  ctx.fillStyle = f.color;
+  if (f.type === "mountains" || f.type === "canyon") {
+    const sp = f.type === "canyon" ? 300 : 290;
+    for (let k = Math.floor(off / sp) - 1; k < (off + W) / sp + 1; k++) {
+      const x = k * sp, h = 80 + hash(k) * 90;
+      if (f.type === "mountains") {
+        ctx.beginPath();
+        ctx.moveTo(x - 190, HORIZON);
+        ctx.lineTo(x, HORIZON - h);
+        ctx.lineTo(x + 190, HORIZON);
+        ctx.closePath(); ctx.fill();
+        if (f.snow) {
+          ctx.fillStyle = "rgba(255,255,255,0.85)";
+          ctx.beginPath();
+          ctx.moveTo(x - 34, HORIZON - h + 34 * (h / 190));
+          ctx.lineTo(x, HORIZON - h);
+          ctx.lineTo(x + 34, HORIZON - h + 34 * (h / 190));
+          ctx.closePath(); ctx.fill();
+          ctx.fillStyle = f.color;
+        }
+      } else {
+        const w2 = 110 + hash(k + 9) * 80;
+        ctx.beginPath();
+        ctx.moveTo(x - w2 / 2, HORIZON);
+        ctx.lineTo(x - w2 / 2 + 14, HORIZON - h);
+        ctx.lineTo(x + w2 / 2 - 14, HORIZON - h);
+        ctx.lineTo(x + w2 / 2, HORIZON);
+        ctx.closePath(); ctx.fill();
+      }
+    }
+  } else if (f.type === "dunes") {
+    for (let k = Math.floor(off / 240) - 1; k < (off + W) / 240 + 1; k++) {
+      const x = k * 240, h = 40 + hash(k) * 45;
+      ctx.beginPath();
+      ctx.ellipse(x, HORIZON, 200, h, 0, Math.PI, 0);
+      ctx.fill();
+    }
+  } else if (f.type === "pyramids") {
+    for (let k = Math.floor(off / 700) - 1; k < (off + W) / 700 + 1; k++) {
+      const x = k * 700 + 200, h = 120 + hash(k) * 50;
+      ctx.beginPath();
+      ctx.moveTo(x - h, HORIZON); ctx.lineTo(x, HORIZON - h); ctx.lineTo(x + h, HORIZON);
+      ctx.closePath(); ctx.fill();
+    }
+  } else if (f.type === "skyline") {
+    for (let k = Math.floor(off / 85) - 1; k < (off + W) / 85 + 1; k++) {
+      const x = k * 85, h = 60 + hash(k) * 150, w2 = 44 + hash(k + 5) * 24;
+      ctx.fillRect(x, HORIZON - h, w2, h);
+      ctx.fillStyle = "rgba(255,220,120,0.5)";
+      for (let wy = 0; wy < 3; wy++) {
+        if (hash(k * 7 + wy) > 0.4) ctx.fillRect(x + 8 + wy * 6, HORIZON - h + 14 + hash(k + wy) * (h - 30), 4, 5);
+      }
+      ctx.fillStyle = f.color;
+    }
+    // the Burj
+    const bx = 1400 * 0.25 + 300;
+    ctx.beginPath();
+    ctx.moveTo(bx - 22, HORIZON);
+    ctx.lineTo(bx - 8, HORIZON - 210);
+    ctx.lineTo(bx, HORIZON - 280);
+    ctx.lineTo(bx + 8, HORIZON - 210);
+    ctx.lineTo(bx + 22, HORIZON);
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawSea(th, t) {
+  if (!th.sea) return;
+  const top = HORIZON + 18;
+  const g = ctx.createLinearGradient(0, top, 0, GROUND);
+  g.addColorStop(0, th.sea);
+  g.addColorStop(1, "#1a3a5a");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, top, W, GROUND - top);
+  ctx.strokeStyle = "rgba(255,255,255,0.25)";
+  ctx.lineWidth = 1.6;
+  for (let row = 0; row < 4; row++) {
+    const y = top + 18 + row * 24;
+    const shift = (t * 22 + row * 31 - camX * 0.5) % 56;
+    for (let x = -56; x < W + 56; x += 56) {
+      ctx.beginPath();
+      ctx.moveTo(x + shift, y);
+      ctx.lineTo(x + shift + 22, y);
+      ctx.stroke();
+    }
+  }
+  // foam line where water meets the beach
+  ctx.fillStyle = "rgba(255,255,255,0.3)";
+  ctx.fillRect(0, GROUND - 3, W, 3);
+}
+
+function drawGroundStrip(th) {
+  ctx.fillStyle = th.ground;
+  ctx.fillRect(camX - 10, GROUND, W + 20, H - GROUND);
+  ctx.fillStyle = th.groundDark;
+  ctx.fillRect(camX - 10, GROUND, W + 20, 5);
+  for (let k = Math.floor(camX / 26); k < (camX + W) / 26 + 1; k++) {
+    const x = k * 26 + hash(k) * 18;
+    const y = GROUND + 12 + hash(k + 99) * (H - GROUND - 22);
+    ctx.fillStyle = th.groundDark;
+    ctx.fillRect(x, y, 4, 3);
+  }
+}
+
+/* individual decor pieces — x is world x, drawn on the ground line */
+const DECOR = {
+  palm(x, t) {
+    ctx.strokeStyle = "#7a5a30"; ctx.lineWidth = 7;
+    ctx.beginPath(); ctx.moveTo(x, GROUND); ctx.quadraticCurveTo(x + 8, GROUND - 55, x + 20, GROUND - 95); ctx.stroke();
+    ctx.fillStyle = "#3a7a3a";
+    for (let i = 0; i < 6; i++) {
+      const a = -Math.PI / 2 + (i - 2.5) * 0.5 + Math.sin(t * 0.8 + x) * 0.04;
+      ctx.save();
+      ctx.translate(x + 20, GROUND - 95);
+      ctx.rotate(a);
+      ctx.beginPath(); ctx.ellipse(26, 0, 27, 7, 0, 0, 7); ctx.fill();
+      ctx.restore();
+    }
+  },
+  minaret(x) {
+    ctx.fillStyle = "#d8c8a8";
+    ctx.fillRect(x - 14, GROUND - 165, 28, 165);
+    ctx.fillRect(x - 20, GROUND - 175, 40, 12);
+    ctx.fillRect(x - 10, GROUND - 200, 20, 26);
+    ctx.fillStyle = "#2ec4a0";
+    ctx.beginPath(); ctx.arc(x, GROUND - 200, 11, Math.PI, 0); ctx.fill();
+    ctx.strokeStyle = "#f3c969"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x, GROUND - 216, 5, 0.4, Math.PI * 1.6); ctx.stroke();
+    ctx.fillStyle = "#8a6a40";
+    ctx.fillRect(x - 5, GROUND - 26, 10, 26);
+  },
+  stall(x) {
+    ctx.fillStyle = "#8a5a30";
+    ctx.fillRect(x - 32, GROUND - 52, 5, 52);
+    ctx.fillRect(x + 27, GROUND - 52, 5, 52);
+    for (let i = 0; i < 5; i++) {
+      ctx.fillStyle = i % 2 ? "#e8e0d0" : "#c84a4a";
+      ctx.beginPath();
+      ctx.moveTo(x - 38 + i * 15.5, GROUND - 52);
+      ctx.lineTo(x - 38 + (i + 1) * 15.5, GROUND - 52);
+      ctx.lineTo(x - 38 + (i + 0.5) * 15.5, GROUND - 40);
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.fillStyle = "#a8763a";
+    ctx.fillRect(x - 26, GROUND - 22, 22, 22);
+    ctx.fillRect(x + 2, GROUND - 16, 18, 16);
+  },
+  houseTN(x) {
+    ctx.fillStyle = "#f2efe6";
+    ctx.fillRect(x - 45, GROUND - 75, 90, 75);
+    ctx.fillStyle = "#2a6ac8";
+    ctx.beginPath(); ctx.arc(x, GROUND - 48, 14, Math.PI, 0); ctx.fill();
+    ctx.fillRect(x - 14, GROUND - 48, 28, 48);
+    ctx.beginPath(); ctx.arc(x - 30, GROUND - 52, 7, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + 30, GROUND - 52, 7, 0, 7); ctx.fill();
+    ctx.fillStyle = "#f2efe6";
+    ctx.beginPath(); ctx.arc(x, GROUND - 75, 22, Math.PI, 0); ctx.fill();
+  },
+  houseWhite(x) {
+    ctx.fillStyle = "#efe9da";
+    ctx.fillRect(x - 40, GROUND - 68, 80, 68);
+    ctx.fillStyle = "#b89a6a";
+    ctx.beginPath(); ctx.arc(x, GROUND - 38, 11, Math.PI, 0); ctx.fill();
+    ctx.fillRect(x - 11, GROUND - 38, 22, 38);
+    ctx.fillStyle = "#7a98b8";
+    ctx.fillRect(x - 32, GROUND - 54, 12, 14);
+    ctx.fillRect(x + 20, GROUND - 54, 12, 14);
+  },
+  pyramid(x) {
+    ctx.fillStyle = "#d8b060";
+    ctx.beginPath();
+    ctx.moveTo(x - 115, GROUND); ctx.lineTo(x, GROUND - 160); ctx.lineTo(x + 115, GROUND);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#b8903a";
+    ctx.beginPath();
+    ctx.moveTo(x, GROUND - 160); ctx.lineTo(x + 115, GROUND); ctx.lineTo(x + 30, GROUND);
+    ctx.closePath(); ctx.fill();
+  },
+  obelisk(x) {
+    ctx.fillStyle = "#c8a868";
+    ctx.beginPath();
+    ctx.moveTo(x - 11, GROUND); ctx.lineTo(x - 7, GROUND - 110); ctx.lineTo(x + 7, GROUND - 110); ctx.lineTo(x + 11, GROUND);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x - 7, GROUND - 110); ctx.lineTo(x, GROUND - 128); ctx.lineTo(x + 7, GROUND - 110);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#8a6a3a";
+    for (let i = 1; i < 5; i++) ctx.fillRect(x - 3, GROUND - 18 * i - 8, 6, 7);
+  },
+  petra(x) {
+    ctx.fillStyle = "#8a3a44";
+    ctx.beginPath();
+    ctx.moveTo(x - 165, GROUND);
+    ctx.quadraticCurveTo(x - 175, GROUND - 230, x - 60, GROUND - 240);
+    ctx.quadraticCurveTo(x + 80, GROUND - 245, x + 165, GROUND - 215);
+    ctx.lineTo(x + 170, GROUND);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#c87a6a";
+    ctx.fillRect(x - 78, GROUND - 175, 156, 175);
+    ctx.fillStyle = "#a85a4a";
+    for (let i = 0; i < 4; i++) ctx.fillRect(x - 64 + i * 36, GROUND - 158, 13, 158);
+    ctx.beginPath();
+    ctx.moveTo(x - 84, GROUND - 158); ctx.lineTo(x, GROUND - 192); ctx.lineTo(x + 84, GROUND - 158);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#3a1a1e";
+    ctx.fillRect(x - 17, GROUND - 60, 34, 60);
+  },
+  rock(x) {
+    ctx.fillStyle = "#a8504a";
+    ctx.beginPath();
+    ctx.moveTo(x - 55, GROUND);
+    ctx.quadraticCurveTo(x - 50, GROUND - 85, x - 5, GROUND - 92);
+    ctx.quadraticCurveTo(x + 48, GROUND - 86, x + 55, GROUND);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "rgba(0,0,0,0.15)";
+    ctx.beginPath();
+    ctx.moveTo(x + 5, GROUND - 90); ctx.quadraticCurveTo(x + 48, GROUND - 84, x + 55, GROUND);
+    ctx.lineTo(x + 14, GROUND);
+    ctx.closePath(); ctx.fill();
+  },
+  cedar(x) {
+    ctx.fillStyle = "#6a4a2a";
+    ctx.fillRect(x - 6, GROUND - 48, 12, 48);
+    ctx.fillStyle = "#2a5a34";
+    for (let i = 0; i < 4; i++) {
+      const w2 = 78 - i * 16, y = GROUND - 52 - i * 22;
+      ctx.beginPath();
+      ctx.moveTo(x - w2 / 2, y); ctx.lineTo(x + w2 / 2, y); ctx.lineTo(x, y - 20);
+      ctx.closePath(); ctx.fill();
+    }
+  },
+  dune(x) {
+    ctx.fillStyle = "rgba(255,255,255,0.10)";
+    ctx.beginPath(); ctx.ellipse(x, GROUND, 130, 48, 0, Math.PI, 0); ctx.fill();
+  },
+  tent(x) {
+    ctx.fillStyle = "#5a4030";
+    ctx.beginPath();
+    ctx.moveTo(x - 62, GROUND); ctx.lineTo(x, GROUND - 58); ctx.lineTo(x + 62, GROUND);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#f3c969";
+    ctx.beginPath();
+    ctx.moveTo(x - 13, GROUND); ctx.lineTo(x, GROUND - 26); ctx.lineTo(x + 13, GROUND);
+    ctx.closePath(); ctx.fill();
+  },
+  skyscraper(x, t, v) {
+    const hgt = 150 + (v || 1) * 38;
+    ctx.fillStyle = "#3a4a6a";
+    ctx.fillRect(x - 26, GROUND - hgt, 52, hgt);
+    ctx.fillStyle = "rgba(255,220,120,0.65)";
+    for (let r = 0; r < hgt / 22 - 1; r++) {
+      for (let cl = 0; cl < 3; cl++) {
+        if (hash(x + r * 7 + cl) > 0.35) ctx.fillRect(x - 18 + cl * 14, GROUND - hgt + 12 + r * 22, 8, 9);
+      }
+    }
+    ctx.fillStyle = "#3a4a6a";
+    ctx.fillRect(x - 2, GROUND - hgt - 24, 4, 24);
+  },
+  fort(x) {
+    ctx.fillStyle = "#c8a878";
+    ctx.fillRect(x - 105, GROUND - 95, 210, 95);
+    for (let i = 0; i < 8; i++) ctx.fillRect(x - 105 + i * 28, GROUND - 108, 16, 13);
+    ctx.fillRect(x - 130, GROUND - 130, 44, 130);
+    ctx.fillRect(x + 86, GROUND - 130, 44, 130);
+    for (let i = 0; i < 3; i++) {
+      ctx.fillRect(x - 130 + i * 16, GROUND - 142, 10, 12);
+      ctx.fillRect(x + 86 + i * 16, GROUND - 142, 10, 12);
+    }
+    ctx.fillStyle = "#6a4a2a";
+    ctx.beginPath(); ctx.arc(x, GROUND - 38, 19, Math.PI, 0); ctx.fill();
+    ctx.fillRect(x - 19, GROUND - 38, 38, 38);
+  },
+  dhow(x, t) {
+    const bob = Math.sin(t * 1.4 + x) * 3;
+    const y = GROUND - 12 + bob;
+    ctx.fillStyle = "#6a4a2a";
+    ctx.beginPath();
+    ctx.moveTo(x - 48, y - 14);
+    ctx.quadraticCurveTo(x, y + 12, x + 52, y - 18);
+    ctx.lineTo(x + 38, y); ctx.lineTo(x - 38, y);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = "#4a3420"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(x, y - 8); ctx.lineTo(x + 10, y - 78); ctx.stroke();
+    ctx.fillStyle = "#f0ead8";
+    ctx.beginPath();
+    ctx.moveTo(x + 9, y - 74); ctx.lineTo(x - 34, y - 16); ctx.lineTo(x + 7, y - 16);
+    ctx.closePath(); ctx.fill();
+  },
+  incense(x, t) {
+    ctx.fillStyle = "#8a5a30";
+    ctx.beginPath(); ctx.moveTo(x - 16, GROUND); ctx.lineTo(x - 10, GROUND - 22); ctx.lineTo(x + 10, GROUND - 22); ctx.lineTo(x + 16, GROUND); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#e8a23a";
+    ctx.beginPath(); ctx.arc(x, GROUND - 24, 5, 0, 7); ctx.fill();
+    for (let i = 0; i < 5; i++) {
+      const p = (t * 0.35 + i * 0.2) % 1;
+      ctx.fillStyle = `rgba(220,220,230,${0.4 * (1 - p)})`;
+      ctx.beginPath();
+      ctx.arc(x + Math.sin(p * 9 + i) * 9, GROUND - 30 - p * 75, 4 + p * 7, 0, 7);
+      ctx.fill();
+    }
+  },
+  train(x, t) {
+    ctx.strokeStyle = "#5a4a3a"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(x - 60, GROUND - 1); ctx.lineTo(x + 380, GROUND - 1); ctx.stroke();
+    ctx.fillStyle = "#7a3a2a";
+    ctx.fillRect(x - 40, GROUND - 46, 70, 44);
+    ctx.fillRect(x - 40, GROUND - 62, 30, 18);
+    ctx.fillStyle = "#3a2a22";
+    ctx.beginPath(); ctx.arc(x - 26, GROUND - 4, 8, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + 12, GROUND - 4, 8, 0, 7); ctx.fill();
+    for (let i = 0; i < 4; i++) {
+      const cx2 = x + 48 + i * 84;
+      ctx.fillStyle = "#6a5242";
+      ctx.fillRect(cx2, GROUND - 36, 72, 34);
+      ctx.fillStyle = "#4a3828";
+      ctx.beginPath(); ctx.ellipse(cx2 + 36, GROUND - 36, 32, 8, 0, Math.PI, 0); ctx.fill();
+      ctx.fillStyle = "#3a2a22";
+      ctx.beginPath(); ctx.arc(cx2 + 16, GROUND - 4, 7, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx2 + 56, GROUND - 4, 7, 0, 7); ctx.fill();
+    }
+    const puff = (t * 0.5) % 1;
+    ctx.fillStyle = `rgba(200,200,200,${0.5 * (1 - puff)})`;
+    ctx.beginPath(); ctx.arc(x - 28, GROUND - 70 - puff * 40, 6 + puff * 10, 0, 7); ctx.fill();
+  },
+};
+
+function drawDecorItem(d, t) {
+  const fn = DECOR[d[0]];
+  if (fn) fn(d[1] * LEVEL_W, t, d[2]);
+}
+
+function drawGate(t) {
+  const x = level.gateX;
+  const open = gateOpen();
+  const last = level.ci >= COUNTRIES.length - 1;
+  ctx.fillStyle = "#9a7a4a";
+  ctx.fillRect(x - 55, GROUND - 130, 18, 130);
+  ctx.fillRect(x + 37, GROUND - 130, 18, 130);
+  ctx.strokeStyle = "#9a7a4a"; ctx.lineWidth = 14;
+  ctx.beginPath();
+  ctx.moveTo(x - 46, GROUND - 124);
+  ctx.quadraticCurveTo(x, GROUND - 172, x + 46, GROUND - 124);
+  ctx.stroke();
+  // banner
+  ctx.fillStyle = open ? "#2ec4a0" : "#7a4a4a";
+  ctx.fillRect(x - 70, GROUND - 208, 140, 30);
+  ctx.fillStyle = "#1a1330";
+  ctx.font = "bold 14px Georgia";
+  ctx.textAlign = "center";
+  const label = last ? "🌅 Ras al-Hadd" : `${COUNTRIES[level.ci + 1].flag} ${COUNTRIES[level.ci + 1].name}`;
+  ctx.fillText(label, x, GROUND - 188);
+  if (!open) {
+    ctx.strokeStyle = "#c84a4a"; ctx.lineWidth = 4;
+    ctx.setLineDash([10, 8]);
+    ctx.beginPath(); ctx.moveTo(x - 46, GROUND - 70); ctx.lineTo(x + 46, GROUND - 50); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x - 46, GROUND - 40); ctx.lineTo(x + 46, GROUND - 78); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.font = "12px Georgia";
+    ctx.fillStyle = "#f7e8c9";
+    ctx.fillText(`answer all ${level.npcs.length} to open`, x, GROUND - 224);
+  } else {
+    const glow = 0.5 + 0.5 * Math.sin(t * 4);
+    ctx.fillStyle = `rgba(243,201,105,${0.25 + glow * 0.3})`;
+    ctx.beginPath(); ctx.arc(x, GROUND - 100, 40 + glow * 6, 0, 7); ctx.fill();
+  }
+  ctx.textAlign = "left";
+}
+
+function drawCoin(c2, t) {
+  const bob = Math.sin(t * 3 + c2.x * 0.05) * 4;
+  const y = c2.y + bob;
+  ctx.fillStyle = "#f3c969";
+  ctx.beginPath(); ctx.arc(c2.x, y, 8, 0, 7); ctx.fill();
+  ctx.fillStyle = "#c98a2d";
+  ctx.beginPath(); ctx.arc(c2.x, y, 5, 0, 7); ctx.fill();
+  ctx.fillStyle = "#f3c969";
+  ctx.font = "bold 8px Georgia";
+  ctx.textAlign = "center";
+  ctx.fillText("¢", c2.x, y + 3);
+  ctx.textAlign = "left";
+}
+
+function drawNpc(n, t) {
+  const facing = player.x < n.x ? -1 : 1;
+  drawPerson(n.x, GROUND, n.palette, Math.sin(t + n.x) * 0.3, facing);
+  ctx.font = "12px Georgia";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "rgba(0,0,0,0.4)";
+  ctx.fillText(n.enc.persona, n.x + 1, GROUND - 70 + 1);
+  ctx.fillStyle = "#f7e8c9";
+  ctx.fillText(n.enc.persona, n.x, GROUND - 70);
+  if (!n.done) {
+    const b2 = Math.abs(Math.sin(t * 3)) * 6;
+    ctx.font = "bold 20px Georgia";
+    ctx.fillStyle = "#f3c969";
+    ctx.fillText("!", n.x, GROUND - 84 - b2);
+  } else {
+    ctx.font = "bold 16px Georgia";
+    ctx.fillStyle = "#2ec4a0";
+    ctx.fillText("✓", n.x, GROUND - 86);
+  }
+  ctx.textAlign = "left";
+}
+
+function nearestNpc() {
+  if (!level) return null;
+  let best = null, bd = 1e9;
+  for (const n of level.npcs) {
+    if (n.done) continue;
+    const d = Math.abs(n.x - player.x);
+    if (d < 58 && d < bd) { bd = d; best = n; }
+  }
+  return best;
+}
+
+function render(t) {
+  if (!level) return;
+  const th = level.theme;
+  // sky
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, th.sky[0]);
+  g.addColorStop(1, th.sky[1]);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  drawCelestial(th, t);
+  drawFar(th, t);
+  drawSea(th, t);
+
+  // world space
+  ctx.save();
+  ctx.translate(-Math.round(camX), 0);
+  drawGroundStrip(th);
+  // country name floating near the start of the level
+  ctx.font = "bold 22px Georgia";
+  ctx.fillStyle = "rgba(247,232,201,0.9)";
+  ctx.fillText(`${level.country.name} — ${level.country.arabic}`, 70, GROUND - 200);
+  ctx.font = "14px Georgia";
+  ctx.fillStyle = "rgba(247,232,201,0.6)";
+  ctx.fillText("walk east →", 70, GROUND - 178);
+
+  for (const d of th.decor) drawDecorItem(d, t);
+  drawGate(t);
+  for (const c2 of level.coins) if (!c2.got) drawCoin(c2, t);
+  for (const n of level.npcs) drawNpc(n, t);
+
+  // player
+  drawPerson(player.x, player.y, state.character.palette, player.walkPhase, player.facing);
+  if (state.character.falconSave && !state.falconUsed) {
+    drawFalcon(player.x + Math.sin(t * 1.3) * 34, player.y - 92 + Math.sin(t * 2.4) * 9, t);
+  }
+
+  // talk prompt
+  const n = nearestNpc();
+  if (n && !paused()) {
+    const bx = n.x, by = GROUND - 116;
+    ctx.fillStyle = "rgba(26,19,48,0.9)";
+    ctx.strokeStyle = "#f3c969"; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(bx - 44, by - 16, 88, 24, 8);
+    else ctx.rect(bx - 44, by - 16, 88, 24);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#f3c969";
+    ctx.font = "bold 13px Georgia";
+    ctx.textAlign = "center";
+    ctx.fillText("E — Talk", bx, by + 1);
+    ctx.textAlign = "left";
+  }
+  ctx.restore();
+
+  // fade
+  if (fade > 0) {
+    ctx.fillStyle = `rgba(8,6,16,${fade})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+}
+
+/* ---- update ---- */
+function update(dt) {
+  const speed = 250;
+  let vx = 0;
+  if (input.left) vx -= speed;
+  if (input.right) vx += speed;
+  if (vx !== 0) {
+    player.facing = vx > 0 ? 1 : -1;
+    player.walkPhase += dt * 11;
+  } else {
+    player.walkPhase = 0;
+  }
+  player.x = Math.max(30, Math.min(LEVEL_W - 30, player.x + vx * dt));
+
+  // gravity / jump
+  player.vy += 1800 * dt;
+  player.y += player.vy * dt;
+  if (player.y >= GROUND) { player.y = GROUND; player.vy = 0; player.onGround = true; }
+
+  // block at locked gate
+  if (!gateOpen() && player.x > level.gateX - 40) player.x = level.gateX - 40;
+
+  // coins
+  for (const c2 of level.coins) {
+    if (c2.got) continue;
+    if (Math.abs(c2.x - player.x) < 20 && c2.y > player.y - 64 && c2.y < player.y + 6) {
+      c2.got = true;
+      state.gold += COIN_VALUE * state.character.goldMult;
+      sfx.coin();
+      renderHud();
+    }
+  }
+
+  // gate crossing
+  if (gateOpen() && player.x > level.gateX + 50 && !fading) {
+    const next = level.ci + 1;
+    startFade(() => {
+      if (next < COUNTRIES.length) loadCountry(next);
+      else victory();
+    });
+  }
+
+  camX = Math.max(0, Math.min(LEVEL_W - W, player.x - W * 0.42));
+}
+
+function jump() {
+  if (player.onGround && !paused()) {
+    player.vy = -640;
+    player.onGround = false;
+    sfx.jump();
+  }
+}
+
+function startFade(onBlack) {
+  fading = { dir: 1, onBlack };
+}
+
+function stepFade(dt) {
+  if (!fading) return;
+  fade += fading.dir * dt * 2.2;
+  if (fade >= 1 && fading.dir === 1) {
+    fade = 1;
+    fading.onBlack();
+    fading.dir = -1;
+  } else if (fade <= 0 && fading.dir === -1) {
+    fade = 0;
+    fading = null;
+  }
+}
+
+/* ---- main loop ---- */
+let lastTs = 0;
+function loop(ts) {
+  const dt = Math.min((ts - lastTs) / 1000, 0.05) || 0;
+  lastTs = ts;
+  T += dt;
+  stepFade(dt);
+  if (level && !paused()) update(dt);
+  if (level && state.character) render(T);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* =====================================================
+   UI / GAME FLOW
+   ===================================================== */
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+
+function showOverlay(id) { $(id).classList.add("show"); openOverlays++; }
+function hideOverlay(id) {
+  if ($(id).classList.contains("show")) {
+    $(id).classList.remove("show");
+    openOverlays = Math.max(0, openOverlays - 1);
+  }
+}
+
+let toastTimer = null;
+function toast(msg, ms = 3200) {
+  const el = $("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), ms);
 }
 
 function renderHud() {
-  $("hud-hearts").textContent = "❤️".repeat(state.hearts) + "🖤".repeat(Math.max(0, state.character.hearts - state.hearts));
+  const ch = state.character;
+  $("hud-hearts").textContent = "❤️".repeat(state.hearts) + "🖤".repeat(Math.max(0, ch.hearts - state.hearts));
   $("hud-gold").textContent = `💰 ${state.gold}`;
-  $("hud-progress").textContent = `${state.character.emoji} ${COUNTRIES[state.countryIndex].flag} ${state.encounterIndex + 1}/${COUNTRIES[state.countryIndex].encounters.length}`;
+  $("hud-hints").textContent = `🔮 ${state.hints}`;
+  const done = level ? level.npcs.filter((n) => n.done).length : 0;
+  $("hud-country").textContent = level ? `${level.country.flag} ${done}/${level.npcs.length}` : "";
+  $("hud-flags").innerHTML = COUNTRIES.map((c, i) => {
+    const cls = i < state.countryIndex ? "done-flag" : i === state.countryIndex ? "cur-flag" : "todo-flag";
+    return `<span class="${cls}">${c.flag}</span>`;
+  }).join("");
   $("hint-count").textContent = state.hints;
-  $("btn-hint").disabled = state.hints <= 0 || state.hintUsedThisQuestion;
 }
 
-function renderMap(elId) {
-  const el = $(elId);
-  el.innerHTML = "";
-  COUNTRIES.forEach((c, i) => {
-    if (i > 0) {
-      const path = document.createElement("span");
-      path.className = "path";
-      path.textContent = "•••";
-      el.appendChild(path);
-    }
-    const stop = document.createElement("span");
-    stop.className = "stop" + (i < state.countryIndex ? " done" : i === state.countryIndex ? " current" : "");
-    stop.textContent = c.flag;
-    stop.title = c.name;
-    el.appendChild(stop);
-  });
-}
-
-function toast(msg) {
-  $("toast").textContent = msg;
-}
-
-/* =====================================================
-   SCREENS
-   ===================================================== */
-
-// ---- Character selection ----
+/* ---- character selection ---- */
 function buildCharacterGrid() {
   const grid = $("char-grid");
   CHARACTERS.forEach((ch) => {
     const card = document.createElement("div");
     card.className = "char-card";
-    card.innerHTML = `
-      <span class="char-emoji">${ch.emoji}</span>
+    const pc = document.createElement("canvas");
+    pc.width = 72; pc.height = 96;
+    const pctx = pc.getContext("2d");
+    pctx.translate(36, 88);
+    pctx.scale(1.3, 1.3);
+    drawPersonShape(pctx, ch.palette, 0);
+    card.appendChild(pc);
+    const info = document.createElement("div");
+    info.innerHTML = `
       <div class="char-name">${ch.name}</div>
       <div class="char-title">${ch.title}</div>
       <div class="char-perk">${ch.perkLabel}</div>
     `;
+    card.appendChild(info);
     card.addEventListener("click", () => {
       document.querySelectorAll(".char-card").forEach((c) => c.classList.remove("selected"));
       card.classList.add("selected");
       state.character = ch;
       $("btn-start").disabled = false;
-      $("btn-start").textContent = `Begin the Journey as ${ch.name} ${ch.emoji}`;
+      $("btn-start").textContent = `Begin the Journey as ${ch.name} 🐪`;
     });
     grid.appendChild(card);
   });
@@ -788,67 +1689,66 @@ function startGame() {
   state.hints = ch.hints;
   state.gold = 0;
   state.countryIndex = 0;
-  state.encounterIndex = 0;
   state.correct = 0;
   state.streak = 0;
   state.bestStreak = 0;
   state.falconUsed = false;
-  enterCountry();
+  showScreen("screen-game");
+  loadCountry(0);
 }
 
-// ---- Country arrival scene ----
-function enterCountry() {
-  const country = COUNTRIES[state.countryIndex];
-  state.encounterIndex = 0;
-  // snapshot so the player can retry this land after a game over
-  state.countryStart = {
-    gold: state.gold,
-    correct: state.correct,
-    hints: state.hints,
-  };
-  $("scene-flag").textContent = country.flag;
-  $("scene-country").textContent = `${country.name} — ${country.arabic}`;
-  $("scene-text").textContent = country.scene;
-  renderMap("map-scene");
-  show("screen-scene");
+function loadCountry(ci) {
+  state.countryIndex = ci;
+  state.countryStart = { gold: state.gold, correct: state.correct, hints: state.hints };
+  level = buildLevel(ci);
+  player.x = 120; player.y = GROUND; player.vy = 0; player.facing = 1;
+  camX = 0;
+  const c = COUNTRIES[ci];
+  $("scene-flag").textContent = c.flag;
+  $("scene-country").textContent = `${c.name} — ${c.arabic}`;
+  $("scene-text").textContent = c.scene;
+  renderHud();
+  showOverlay("overlay-scene");
 }
 
-// ---- Question / encounter ----
-let currentOptions = []; // shuffled {text, isCorrect}
+/* ---- questions ---- */
+let currentNpc = null;
+let currentOptions = [];
+let answered = false;
 
-function showEncounter() {
-  const country = COUNTRIES[state.countryIndex];
-  const enc = country.encounters[state.encounterIndex];
+function openQuestion(npc) {
+  currentNpc = npc;
+  answered = false;
   state.hintUsedThisQuestion = false;
-
-  toast("");
-  $("encounter-text").textContent = enc.scene;
-  $("question-text").textContent = enc.question;
+  const enc = npc.enc;
+  $("enc-persona").textContent = `💬 ${enc.persona}`;
+  $("enc-scene").textContent = enc.scene;
+  $("q-text").textContent = enc.question;
   $("feedback").className = "feedback";
   $("btn-next").style.display = "none";
   $("btn-hint").style.display = "block";
+  $("btn-hint").disabled = state.hints <= 0;
 
   currentOptions = shuffled(enc.options.map((text, i) => ({ text, isCorrect: i === enc.answer })));
-
   const answersEl = $("answers");
   answersEl.innerHTML = "";
   currentOptions.forEach((opt, i) => {
     const btn = document.createElement("button");
     btn.className = "answer-btn";
-    btn.textContent = `${["🐪", "🏺", "🌙", "⭐"][i]}  ${opt.text}`;
-    btn.addEventListener("click", () => answer(btn, opt, enc));
+    btn.textContent = `${i + 1}.  ${opt.text}`;
+    btn.addEventListener("click", () => answerQuestion(btn, opt));
     answersEl.appendChild(btn);
   });
-
-  renderMap("map-question");
-  renderHud();
-  show("screen-question");
+  showOverlay("overlay-question");
 }
 
-function answer(btn, opt, enc) {
-  // lock all answers
+function answerQuestion(btn, opt) {
+  if (answered) return;
+  answered = true;
+  const enc = currentNpc.enc;
   document.querySelectorAll(".answer-btn").forEach((b) => (b.disabled = true));
   $("btn-hint").style.display = "none";
+  currentNpc.done = true;
 
   const fb = $("feedback");
   if (opt.isCorrect) {
@@ -865,9 +1765,9 @@ function answer(btn, opt, enc) {
     state.gold += earned;
     fb.classList.add("good", "show");
     $("feedback-verdict").textContent = `✅ Correct! +${earned} gold.${bonusNote}`;
+    sfx.correct();
   } else {
     btn.classList.add("wrong");
-    // reveal the right one (buttons are rendered in currentOptions order)
     document.querySelectorAll(".answer-btn").forEach((b, i) => {
       if (currentOptions[i].isCorrect) b.classList.add("correct");
     });
@@ -877,31 +1777,22 @@ function answer(btn, opt, enc) {
     if (state.hearts <= 0 && state.character.falconSave && !state.falconUsed) {
       state.falconUsed = true;
       state.hearts = 1;
-      $("feedback-verdict").textContent = "💔 Wrong! …but Zahra's falcon swoops down and pulls you from the dunes! One heart restored. 🦅";
+      $("feedback-verdict").textContent = "💔 Wrong! …but Zahra's falcon swoops down and pulls you back from the brink! One heart restored. 🦅";
     } else {
       $("feedback-verdict").textContent = "💔 Wrong! The desert takes its toll…";
     }
+    sfx.wrong();
   }
   $("feedback-fact").textContent = enc.fact;
   renderHud();
-
-  if (state.hearts <= 0) {
-    $("btn-next").textContent = "Face Your Fate…";
-  } else {
-    const lastEncounter = state.encounterIndex >= COUNTRIES[state.countryIndex].encounters.length - 1;
-    const lastCountry = state.countryIndex >= COUNTRIES.length - 1;
-    $("btn-next").textContent = lastEncounter
-      ? (lastCountry ? "Enter Muscat in Triumph! 🏆" : "Travel to the Next Land →")
-      : "Continue the Journey →";
-  }
+  $("btn-next").textContent = state.hearts <= 0 ? "Face Your Fate…" : "Continue →";
   $("btn-next").style.display = "block";
 }
 
 function useHint() {
-  if (state.hints <= 0 || state.hintUsedThisQuestion) return;
+  if (state.hints <= 0 || state.hintUsedThisQuestion || answered) return;
   state.hints--;
   state.hintUsedThisQuestion = true;
-  // remove two wrong answers
   const wrongBtns = [];
   document.querySelectorAll(".answer-btn").forEach((b, i) => {
     if (!currentOptions[i].isCorrect && !b.disabled) wrongBtns.push(b);
@@ -910,86 +1801,140 @@ function useHint() {
     b.disabled = true;
     b.classList.add("removed");
   });
-  toast("🔮 A vision clears the sand from your eyes — two false paths fade away…");
+  $("btn-hint").disabled = true;
   renderHud();
 }
 
-function nextStep() {
+function closeQuestion() {
+  hideOverlay("overlay-question");
   if (state.hearts <= 0) {
-    gameOver();
+    showGameOver();
     return;
   }
-  state.encounterIndex++;
-  const country = COUNTRIES[state.countryIndex];
-  if (state.encounterIndex < country.encounters.length) {
-    showEncounter();
-  } else {
-    state.countryIndex++;
-    if (state.countryIndex < COUNTRIES.length) {
-      enterCountry();
-    } else {
-      victory();
-    }
+  if (gateOpen()) {
+    const last = level.ci >= COUNTRIES.length - 1;
+    toast(last
+      ? "🌅 The way to Ras al-Hadd is open — walk east to the sunrise!"
+      : `✨ The gate has opened! Walk east to ${COUNTRIES[level.ci + 1].name} →`);
+    sfx.gate();
   }
+  renderHud();
 }
 
-// ---- End screens ----
-function gameOver() {
-  const country = COUNTRIES[state.countryIndex];
-  $("gameover-text").textContent =
-    `${state.character.name} ${state.character.title} fell to the riddles of ${country.name} ${country.flag}. ` +
+/* ---- end states ---- */
+function showGameOver() {
+  const c = level.country;
+  $("go-text").textContent =
+    `${state.character.name} ${state.character.title} fell to the riddles of ${c.name} ${c.flag}. ` +
     `But every great traveler knows: the caravan always rides again.`;
   $("go-gold").textContent = state.gold;
   $("go-countries").textContent = state.countryIndex;
-  $("btn-retry").textContent = `⛺ Rest & Retry ${country.name} ${country.flag}`;
-  show("screen-gameover");
+  $("btn-retry").textContent = `⛺ Rest & Retry ${c.name} ${c.flag}`;
+  showOverlay("overlay-gameover");
 }
 
 function retryCountry() {
-  // restore the snapshot taken when entering this country
   state.gold = state.countryStart.gold;
   state.correct = state.countryStart.correct;
   state.hints = state.countryStart.hints;
   state.hearts = state.character.hearts;
   state.streak = 0;
-  enterCountry();
+  hideOverlay("overlay-gameover");
+  loadCountry(state.countryIndex);
 }
 
 function victory() {
   const total = COUNTRIES.reduce((n, c) => n + c.encounters.length, 0);
   const ratio = state.correct / total;
   const rank = RANKS.find((r) => ratio >= r.min);
-  $("victory-text").textContent =
-    `${state.character.emoji} ${state.character.name} ${state.character.title} has crossed all eight lands, ` +
-    `from the gates of Marrakesh to the harbor of Muscat!`;
+  $("v-text").textContent =
+    `${state.character.name} ${state.character.title} has crossed all ${COUNTRIES.length} lands — ` +
+    `from Nouadhibou on the Atlantic to Sur on the Arabian Sea. At Ras al-Hadd, you watch the first ` +
+    `sunrise in all the Arab world.`;
   $("v-gold").textContent = state.gold;
   $("v-correct").textContent = `${state.correct}/${total}`;
   $("v-streak").textContent = `🔥 ${state.bestStreak}`;
   $("v-rank").textContent = rank.name;
   $("v-rank-line").textContent = rank.line;
-  show("screen-victory");
+  showOverlay("overlay-victory");
 }
 
 function backToStart() {
+  hideOverlay("overlay-gameover");
+  hideOverlay("overlay-victory");
+  level = null;
   state.character = null;
+  openOverlays = 0;
   $("btn-start").disabled = true;
   $("btn-start").textContent = "Begin the Journey 🐪";
   document.querySelectorAll(".char-card").forEach((c) => c.classList.remove("selected"));
-  show("screen-start");
+  showScreen("screen-start");
 }
+
+/* =====================================================
+   INPUT
+   ===================================================== */
+window.addEventListener("keydown", (e) => {
+  const k = e.key;
+  // answer with number keys while a question is open
+  if ($("overlay-question").classList.contains("show")) {
+    if (!answered && ["1", "2", "3", "4"].includes(k)) {
+      const btns = document.querySelectorAll(".answer-btn");
+      const b = btns[Number(k) - 1];
+      if (b && !b.disabled) b.click();
+    } else if ((k === "Enter" || k === "e" || k === "E") && answered) {
+      $("btn-next").click();
+    }
+    return;
+  }
+  if (["ArrowLeft", "ArrowRight", "ArrowUp", " "].includes(k)) e.preventDefault();
+  if (k === "ArrowLeft" || k === "a" || k === "A") input.left = true;
+  if (k === "ArrowRight" || k === "d" || k === "D") input.right = true;
+  if ((k === "ArrowUp" || k === "w" || k === "W" || k === " ") && !e.repeat) jump();
+  if ((k === "e" || k === "E" || k === "Enter") && !paused()) {
+    const n = nearestNpc();
+    if (n) openQuestion(n);
+  }
+});
+window.addEventListener("keyup", (e) => {
+  const k = e.key;
+  if (k === "ArrowLeft" || k === "a" || k === "A") input.left = false;
+  if (k === "ArrowRight" || k === "d" || k === "D") input.right = false;
+});
+
+function bindHold(id, on, off) {
+  const el = $(id);
+  el.addEventListener("pointerdown", (e) => { e.preventDefault(); on(); });
+  el.addEventListener("pointerup", off);
+  el.addEventListener("pointerleave", off);
+  el.addEventListener("pointercancel", off);
+}
+bindHold("t-left", () => (input.left = true), () => (input.left = false));
+bindHold("t-right", () => (input.right = true), () => (input.right = false));
+$("t-jump").addEventListener("pointerdown", (e) => { e.preventDefault(); jump(); });
+$("t-talk").addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  if (!paused()) {
+    const n = nearestNpc();
+    if (n) openQuestion(n);
+  }
+});
 
 /* =====================================================
    WIRE UP
    ===================================================== */
-
 buildCharacterGrid();
 $("btn-start").addEventListener("click", startGame);
-$("btn-enter").addEventListener("click", showEncounter);
+$("btn-enter").addEventListener("click", () => hideOverlay("overlay-scene"));
 $("btn-hint").addEventListener("click", useHint);
-$("btn-next").addEventListener("click", nextStep);
+$("btn-next").addEventListener("click", closeQuestion);
 $("btn-retry").addEventListener("click", retryCountry);
 $("btn-restart-1").addEventListener("click", backToStart);
 $("btn-restart-2").addEventListener("click", backToStart);
+$("btn-mute").addEventListener("click", () => {
+  soundOn = !soundOn;
+  $("btn-mute").textContent = soundOn ? "🔊" : "🔇";
+});
 </script>
 </body>
 </html>
