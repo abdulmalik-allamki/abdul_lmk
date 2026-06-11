@@ -48,6 +48,11 @@
   @keyframes shake {
     0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); }
   }
+  @keyframes slideUp {
+    from { transform: translateY(36px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes blinkCaret { 50% { opacity: 0; } }
 
   h1 {
     font-size: clamp(1.7rem, 5vw, 2.7rem);
@@ -122,6 +127,9 @@
     background: transparent; color: var(--sand);
     border: 1px solid var(--card-border); box-shadow: none;
   }
+  .btn.mini {
+    width: auto; padding: 8px 16px; font-size: 0.92rem; border-radius: 10px;
+  }
 
   /* ---- Game HUD ---- */
   .hud {
@@ -137,10 +145,11 @@
   .hud .flags .done-flag { opacity: 1; }
   .hud .flags .todo-flag { opacity: 0.3; filter: grayscale(0.8); }
   .hud .flags .cur-flag { text-shadow: 0 0 10px var(--gold); }
-  #btn-mute {
+  .hud-toggle {
     background: var(--card); border: 1px solid var(--card-border);
     border-radius: 10px; padding: 6px 11px; cursor: pointer; font-size: 1rem; color: var(--sand);
   }
+  .hud-toggle.off { opacity: 0.45; }
 
   /* ---- Stage (canvas + overlays) ---- */
   .stage {
@@ -182,36 +191,83 @@
   .scene-country { text-align: center; color: var(--gold); font-size: 1.45rem; margin-bottom: 12px; }
   .scene-text { line-height: 1.7; font-size: 1.03rem; margin-bottom: 18px; }
 
-  .enc-persona {
-    text-align: center; color: var(--oasis); font-weight: bold;
-    font-size: 1.05rem; margin-bottom: 10px;
+  /* ---- RPG dialogue box ---- */
+  .dialog {
+    position: absolute; left: 10px; right: 10px; bottom: 10px;
+    display: none; gap: 12px;
+    background: linear-gradient(180deg, rgba(22, 15, 44, 0.93), rgba(28, 20, 52, 0.97));
+    border: 2px solid var(--card-border);
+    border-radius: 14px;
+    padding: 12px;
+    z-index: 6;
+    max-height: 62%;
+    box-shadow: 0 -6px 30px rgba(0, 0, 0, 0.45);
   }
-  .encounter-text { font-style: italic; opacity: 0.92; line-height: 1.65; font-size: 1rem; margin-bottom: 16px; }
-  .question-text { font-size: 1.15rem; color: var(--gold); line-height: 1.45; margin-bottom: 14px; }
+  .dialog.show { display: flex; animation: slideUp 0.32s ease; }
+  .dialog-portrait { flex: 0 0 auto; }
+  #portrait {
+    width: 126px; height: 126px; display: block;
+    border-radius: 12px;
+    border: 2px solid var(--card-border);
+    background: #000;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  }
+  .dialog-main {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+    overflow: auto;
+  }
+  .dialog-name {
+    color: var(--oasis); font-weight: bold; font-size: 1.02rem;
+    margin-bottom: 6px;
+  }
+  .dialog-name .chip {
+    display: inline-block;
+    background: rgba(46, 196, 160, 0.14);
+    border: 1px solid rgba(46, 196, 160, 0.45);
+    border-radius: 8px; padding: 2px 10px;
+  }
+  .dialog-text {
+    line-height: 1.5; font-size: 0.99rem;
+    margin-bottom: 10px; min-height: 42px;
+    font-style: italic; opacity: 0.95;
+  }
+  .dialog-text.typing::after {
+    content: "▌"; color: var(--gold);
+    animation: blinkCaret 0.8s infinite;
+  }
+  .dialog-text.q { font-style: normal; color: var(--gold); font-size: 1.06rem; }
+  .dialog-text.good .verdict { color: #9ef0dc; }
+  .dialog-text.bad .verdict { color: #ffb3b7; }
+  .dialog-text .verdict { font-weight: bold; font-style: normal; display: block; margin-bottom: 4px; }
+  .dialog-text .fact { font-style: normal; opacity: 0.92; font-size: 0.94rem; }
 
-  .answers { display: grid; gap: 9px; margin-bottom: 12px; }
+  .dialog-answers {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 10px;
+  }
+  .dialog-answers.show { display: grid; }
   .answer-btn {
-    padding: 11px 14px; font-size: 0.98rem; font-family: inherit; text-align: left;
+    padding: 10px 12px; font-size: 0.93rem; font-family: inherit; text-align: left;
     color: var(--sand); background: var(--card);
     border: 1px solid var(--card-border); border-radius: 10px;
     cursor: pointer; transition: all 0.18s ease;
   }
-  .answer-btn:hover:not(:disabled) { background: rgba(243, 201, 105, 0.14); transform: translateX(4px); }
+  .dialog-answers .answer-btn { opacity: 0; animation: fadeIn 0.3s ease forwards; }
+  .answer-btn:hover:not(:disabled) { background: rgba(243, 201, 105, 0.14); transform: translateX(3px); }
   .answer-btn:disabled { cursor: default; }
-  .answer-btn.correct { background: rgba(46, 196, 160, 0.25); border-color: var(--oasis); animation: pop 0.35s ease; }
-  .answer-btn.wrong { background: rgba(228, 87, 94, 0.22); border-color: var(--danger); animation: shake 0.35s ease; }
-  .answer-btn.removed { opacity: 0.25; text-decoration: line-through; }
+  .answer-btn.correct { background: rgba(46, 196, 160, 0.25); border-color: var(--oasis); animation: pop 0.35s ease forwards !important; opacity: 1 !important; }
+  .answer-btn.wrong { background: rgba(228, 87, 94, 0.22); border-color: var(--danger); animation: shake 0.35s ease forwards !important; opacity: 1 !important; }
+  .answer-btn.removed { opacity: 0.25 !important; text-decoration: line-through; }
 
-  .feedback {
-    margin-top: 12px; padding: 12px 14px; border-radius: 10px;
-    line-height: 1.55; display: none; font-size: 0.97rem;
+  .dialog-actions { display: flex; gap: 8px; justify-content: flex-end; align-items: center; }
+
+  @media (max-width: 620px) {
+    #portrait { width: 84px; height: 84px; }
+    .dialog-answers { grid-template-columns: 1fr; }
+    .dialog { max-height: 75%; }
   }
-  .feedback.show { display: block; animation: fadeIn 0.4s ease; }
-  .feedback.good { background: rgba(46, 196, 160, 0.14); border: 1px solid rgba(46, 196, 160, 0.45); }
-  .feedback.bad { background: rgba(228, 87, 94, 0.12); border: 1px solid rgba(228, 87, 94, 0.45); }
-  .feedback .verdict { font-weight: bold; font-size: 1.05rem; display: block; margin-bottom: 5px; }
-  .feedback.good .verdict { color: #9ef0dc; }
-  .feedback.bad .verdict { color: #ffb3b7; }
 
   /* ---- Touch controls ---- */
   .touch-bar {
@@ -281,7 +337,10 @@
       <span class="stat" id="hud-hints"></span>
       <span class="stat" id="hud-country"></span>
       <span class="stat flags" id="hud-flags"></span>
-      <button id="btn-mute" title="Toggle sound">🔊</button>
+      <span>
+        <button class="hud-toggle" id="btn-voice" title="Toggle character voices">🗣️</button>
+        <button class="hud-toggle" id="btn-mute" title="Toggle sound effects">🔊</button>
+      </span>
     </div>
 
     <div class="stage" id="stage">
@@ -298,19 +357,19 @@
         </div>
       </div>
 
-      <!-- Question / encounter -->
-      <div class="overlay" id="overlay-question">
-        <div class="panel">
-          <p class="enc-persona" id="enc-persona"></p>
-          <p class="encounter-text" id="enc-scene"></p>
-          <p class="question-text" id="q-text"></p>
-          <div class="answers" id="answers"></div>
-          <button class="btn secondary" id="btn-hint">🔮 Use a Hint (<span id="hint-count"></span> left)</button>
-          <div class="feedback" id="feedback">
-            <span class="verdict" id="feedback-verdict"></span>
-            <span id="feedback-fact"></span>
+      <!-- RPG dialogue box -->
+      <div class="dialog" id="dialog">
+        <div class="dialog-portrait">
+          <canvas id="portrait" width="140" height="140"></canvas>
+        </div>
+        <div class="dialog-main">
+          <div class="dialog-name"><span class="chip" id="dlg-name"></span></div>
+          <div class="dialog-text" id="dlg-text"></div>
+          <div class="dialog-answers" id="dlg-answers"></div>
+          <div class="dialog-actions">
+            <button class="btn secondary mini" id="dlg-hint">🔮 Hint (<span id="hint-count"></span>)</button>
+            <button class="btn mini" id="dlg-continue">Continue ▼</button>
           </div>
-          <button class="btn" id="btn-next" style="display:none; margin-top: 12px;">Continue →</button>
         </div>
       </div>
 
@@ -359,7 +418,7 @@
         <button class="tbtn" id="t-talk">💬</button>
       </div>
     </div>
-    <p class="help-line">← → / A D walk &nbsp;·&nbsp; ↑ / W / Space jump &nbsp;·&nbsp; E talk &nbsp;·&nbsp; 1–4 answer</p>
+    <p class="help-line">← → / A D walk &nbsp;·&nbsp; ↑ / W / Space jump &nbsp;·&nbsp; E talk / continue &nbsp;·&nbsp; 1–4 answer</p>
   </section>
 
   <footer>Made with ❤️ — a 2D trivia adventure from the far west to the far east of the Arab world</footer>
@@ -382,14 +441,20 @@ function shuffled(arr) {
   return a;
 }
 
-// deterministic pseudo-random in [0,1) from an integer
+// deterministic pseudo-random in [0,1) from a number
 function hash(n) {
   const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
   return x - Math.floor(x);
 }
 
+function strHash(s) {
+  let n = 0;
+  for (let i = 0; i < s.length; i++) n = (n * 31 + s.charCodeAt(i)) % 100000;
+  return n;
+}
+
 /* =====================================================
-   SOUND (tiny WebAudio beeps, no assets)
+   SOUND EFFECTS (tiny WebAudio beeps, no assets)
    ===================================================== */
 let audioCtx = null;
 let soundOn = true;
@@ -417,7 +482,107 @@ const sfx = {
   wrong: () => beep(150, 0.35, "sawtooth", 0.06),
   gate: () => [392, 523, 659, 784].forEach((f, i) => beep(f, 0.16, "triangle", 0.07, i * 0.09)),
   jump: () => beep(300, 0.06, "square", 0.025),
+  talk: () => beep(440, 0.08, "sine", 0.05),
 };
+
+/* =====================================================
+   CHARACTER VOICES (Web Speech API)
+   Each persona speaks with its own pitch, pace, and —
+   when the browser provides them — a matching voice.
+   ===================================================== */
+const tts = {
+  available: "speechSynthesis" in window,
+  enabled: true,
+  voices: [],
+  speaking: false,
+  load() {
+    if (!this.available) return;
+    this.voices = speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith("en"));
+  },
+  pickVoice(gender, seed) {
+    if (!this.voices.length) return null;
+    let pool = this.voices;
+    if (gender === "f") {
+      const fem = this.voices.filter((v) =>
+        /female|woman|zira|samantha|victoria|karen|moira|tessa|fiona|susan|hazel|aria|jenny|sonia|libby|emma|ava|allison/i.test(v.name));
+      if (fem.length) pool = fem;
+    } else {
+      const masc = this.voices.filter((v) =>
+        /(^|[^fe])male|\bman\b|david|mark|daniel|alex|fred|george|james|ryan|guy|thomas|brian|eric/i.test(v.name) && !/female/i.test(v.name));
+      if (masc.length) pool = masc;
+    }
+    return pool[Math.floor(hash(seed) * pool.length)];
+  },
+  speak(text, prof) {
+    if (!this.available || !this.enabled) return;
+    speechSynthesis.cancel();
+    // strip emoji & symbols so they aren't read aloud
+    const clean = text.replace(/[^\p{L}\p{N}\p{P}\s]/gu, "").replace(/\s+/g, " ").trim();
+    if (!clean) return;
+    const u = new SpeechSynthesisUtterance(clean);
+    const v = this.pickVoice(prof.g, prof.seed);
+    if (v) u.voice = v;
+    u.pitch = prof.pitch;
+    u.rate = prof.rate;
+    u.volume = 0.95;
+    u.onstart = () => { this.speaking = true; };
+    u.onend = () => { this.speaking = false; };
+    u.onerror = () => { this.speaking = false; };
+    speechSynthesis.speak(u);
+  },
+  stop() {
+    if (this.available) {
+      speechSynthesis.cancel();
+      this.speaking = false;
+    }
+  },
+};
+if (tts.available) {
+  tts.load();
+  speechSynthesis.onvoiceschanged = () => tts.load();
+}
+
+/* Voice & look profiles per persona: pitch, rate, gender, beard (for the portrait) */
+const PERSONAS = {
+  "Tea Maker":         { pitch: 0.68, rate: 0.85, g: "m", beard: true },
+  "Train Driver":      { pitch: 0.85, rate: 1.02, g: "m" },
+  "Desert Librarian":  { pitch: 0.75, rate: 0.88, g: "m", beard: true },
+  "Storyteller":       { pitch: 0.62, rate: 0.82, g: "m", beard: true },
+  "Young Guide":       { pitch: 1.35, rate: 1.10, g: "f" },
+  "Caravan Cook":      { pitch: 0.95, rate: 1.00, g: "m" },
+  "Oud Player":        { pitch: 1.00, rate: 0.95, g: "m" },
+  "Tuareg Nomad":      { pitch: 0.80, rate: 0.90, g: "m" },
+  "Bridge Keeper":     { pitch: 0.88, rate: 0.95, g: "m" },
+  "Fisherman":         { pitch: 0.85, rate: 1.00, g: "m" },
+  "Old Sailor":        { pitch: 0.70, rate: 0.85, g: "m", beard: true },
+  "Desert Guide":      { pitch: 0.92, rate: 1.00, g: "m" },
+  "Guardian of Ruins": { pitch: 0.70, rate: 0.85, g: "m", beard: true },
+  "Date Farmer":       { pitch: 0.95, rate: 0.95, g: "m" },
+  "Oasis Keeper":      { pitch: 0.80, rate: 0.90, g: "m", beard: true },
+  "Boat Captain":      { pitch: 0.88, rate: 1.00, g: "m" },
+  "Temple Guard":      { pitch: 0.75, rate: 0.90, g: "m", beard: true },
+  "Old Scribe":        { pitch: 0.68, rate: 0.80, g: "m", beard: true },
+  "Bedouin Rider":     { pitch: 0.85, rate: 1.00, g: "m" },
+  "Bedouin Elder":     { pitch: 0.62, rate: 0.80, g: "m", beard: true },
+  "City Merchant":     { pitch: 1.05, rate: 1.10, g: "m" },
+  "Poet":              { pitch: 1.25, rate: 0.95, g: "f" },
+  "Bookseller":        { pitch: 1.15, rate: 1.00, g: "f" },
+  "Byblos Fisherman":  { pitch: 0.85, rate: 0.95, g: "m" },
+  "Caravan Elder":     { pitch: 0.70, rate: 0.82, g: "m", beard: true },
+  "Tower Guide":       { pitch: 1.08, rate: 1.05, g: "m" },
+  "Pearl Diver":       { pitch: 0.95, rate: 1.05, g: "m" },
+  "City Guide":        { pitch: 1.30, rate: 1.05, g: "f" },
+  "Majlis Host":       { pitch: 0.82, rate: 0.90, g: "m", beard: true },
+  "Omani Sailor":      { pitch: 0.90, rate: 1.00, g: "m" },
+  "Souq Merchant":     { pitch: 1.00, rate: 0.95, g: "m" },
+  "Shipwright of Sur": { pitch: 0.72, rate: 0.85, g: "m", beard: true },
+};
+const NARRATOR = { pitch: 1.0, rate: 0.92, g: "m", seed: 7 };
+
+function personaProf(name) {
+  const p = PERSONAS[name] || { pitch: 1, rate: 1, g: "m" };
+  return { ...p, seed: strHash(name) };
+}
 
 /* =====================================================
    GAME DATA
@@ -454,9 +619,13 @@ const NPC_PALETTES = [
   { skin: "#b87848", robe: "#8a4a3a", accent: "#caa84a", head: "turban", headC: "#e8e0d0" },
   { skin: "#c68a5a", robe: "#4a6a8a", accent: "#d8d0c0", head: "keffiyeh", headC: "#f0ece0" },
   { skin: "#a86838", robe: "#7a6a3a", accent: "#3a5a4a", head: "turban", headC: "#caa84a" },
-  { skin: "#c08858", robe: "#5a3a6a", accent: "#f3c969", head: "hijab", headC: "#d8d0c0" },
+  { skin: "#c08858", robe: "#5a3a6a", accent: "#f3c969", head: "turban", headC: "#d8d0c0" },
   { skin: "#b87848", robe: "#3a6a5a", accent: "#caa84a", head: "fez", headC: "#b83a3a" },
   { skin: "#c68a5a", robe: "#6a4a2a", accent: "#e8e0d0", head: "keffiyeh", headC: "#ffffff" },
+];
+const NPC_PALETTES_F = [
+  { skin: "#c08858", robe: "#7a3a5a", accent: "#f3c969", head: "hijab", headC: "#d8d0c0" },
+  { skin: "#b87848", robe: "#3a5a7a", accent: "#2ec4a0", head: "hijab", headC: "#e8d8b8" },
 ];
 
 /*
@@ -898,11 +1067,14 @@ const W = 960, H = 540, GROUND = 458, HORIZON = 330;
 const LEVEL_W = 2600;
 const cvs = $("game");
 const ctx = cvs.getContext("2d");
+const portraitCvs = $("portrait");
+const pctx = portraitCvs.getContext("2d");
 
 const input = { left: false, right: false };
 const player = { x: 120, y: GROUND, vy: 0, onGround: true, facing: 1, walkPhase: 0 };
 let level = null;          // current level data
 let camX = 0;
+let camTarget = null;      // camera override while in dialogue
 let T = 0;                 // global animation clock (seconds)
 let openOverlays = 0;      // pause world while any overlay is open
 let fade = 0;              // 0..1 screen fade
@@ -913,12 +1085,13 @@ const paused = () => openOverlays > 0 || fading !== null;
 /* ---- level construction ---- */
 function buildLevel(ci) {
   const c = COUNTRIES[ci];
-  const npcs = c.encounters.map((enc, i) => ({
-    enc,
-    x: LEVEL_W * (0.30 + i * 0.22),
-    palette: NPC_PALETTES[(ci * 3 + i) % NPC_PALETTES.length],
-    done: false,
-  }));
+  const npcs = c.encounters.map((enc, i) => {
+    const prof = personaProf(enc.persona);
+    const palette = prof.g === "f"
+      ? NPC_PALETTES_F[Math.floor(hash(strHash(enc.persona)) * NPC_PALETTES_F.length)]
+      : NPC_PALETTES[(ci * 3 + i) % NPC_PALETTES.length];
+    return { enc, prof, x: LEVEL_W * (0.30 + i * 0.22), palette, done: false };
+  });
   const coins = [];
   for (let i = 0; i < 10; i++) {
     const x = 260 + i * (LEVEL_W - 600) / 9 + hash(ci * 100 + i) * 80;
@@ -992,7 +1165,16 @@ function drawPersonShape(c, p, phase) {
   }
 }
 
+function drawShadow(x, y, w2, heightOff) {
+  const squash = Math.max(0.4, 1 - heightOff / 130);
+  ctx.fillStyle = "rgba(0,0,0,0.22)";
+  ctx.beginPath();
+  ctx.ellipse(x, GROUND + 3, w2 * squash, 4.5 * squash, 0, 0, 7);
+  ctx.fill();
+}
+
 function drawPerson(x, y, palette, phase, facing) {
+  drawShadow(x, y, 16, GROUND - y);
   ctx.save();
   ctx.translate(x, y);
   if (facing < 0) ctx.scale(-1, 1);
@@ -1015,6 +1197,131 @@ function drawFalcon(x, y, t) {
   ctx.fillStyle = "#e8c860";
   ctx.fillRect(6, -1.5, 3, 2);
   ctx.restore();
+}
+
+/* ---- animated dialogue portrait ---- */
+function drawPortrait(npc, t, talking) {
+  const c = pctx;
+  const p = npc.palette;
+  const prof = npc.prof;
+  const cx = 70, headY = 62, R = 30;
+  // background from the country sky
+  const th = level.theme;
+  const g = c.createLinearGradient(0, 0, 0, 140);
+  g.addColorStop(0, th.sky[0]);
+  g.addColorStop(1, th.sky[1]);
+  c.fillStyle = g;
+  c.fillRect(0, 0, 140, 140);
+  c.fillStyle = "rgba(0,0,0,0.18)";
+  c.fillRect(0, 0, 140, 140);
+
+  const bob = Math.sin(t * 1.8) * 1.6;
+  c.save();
+  c.translate(0, bob);
+
+  // shoulders / robe
+  c.fillStyle = p.robe;
+  c.beginPath();
+  c.moveTo(18, 140); c.quadraticCurveTo(22, 96, 70, 92);
+  c.quadraticCurveTo(118, 96, 122, 140);
+  c.closePath(); c.fill();
+  c.fillStyle = "rgba(0,0,0,0.18)";
+  c.beginPath();
+  c.moveTo(70, 92); c.quadraticCurveTo(118, 96, 122, 140);
+  c.lineTo(92, 140);
+  c.closePath(); c.fill();
+  c.fillStyle = p.accent;
+  c.fillRect(58, 102, 24, 6);
+
+  // neck + head
+  c.fillStyle = p.skin;
+  c.fillRect(cx - 9, headY + 20, 18, 16);
+  c.beginPath(); c.arc(cx, headY, R, 0, 7); c.fill();
+  // face shading
+  c.fillStyle = "rgba(0,0,0,0.10)";
+  c.beginPath(); c.arc(cx + 10, headY + 4, R * 0.8, -0.6, 1.6); c.fill();
+
+  // ears
+  c.fillStyle = p.skin;
+  c.beginPath(); c.arc(cx - R + 1, headY + 4, 5, 0, 7); c.fill();
+  c.beginPath(); c.arc(cx + R - 1, headY + 4, 5, 0, 7); c.fill();
+
+  // eyes (with blink)
+  const blink = (t % 3.4) < 0.13;
+  c.fillStyle = "#f5f0e6";
+  if (!blink) {
+    c.beginPath(); c.ellipse(cx - 11, headY - 3, 6, 4.5, 0, 0, 7); c.fill();
+    c.beginPath(); c.ellipse(cx + 11, headY - 3, 6, 4.5, 0, 0, 7); c.fill();
+    c.fillStyle = "#2a1c10";
+    c.beginPath(); c.arc(cx - 10, headY - 2.5, 2.6, 0, 7); c.fill();
+    c.beginPath(); c.arc(cx + 12, headY - 2.5, 2.6, 0, 7); c.fill();
+  } else {
+    c.strokeStyle = "#5a3a22"; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(cx - 16, headY - 3); c.lineTo(cx - 6, headY - 3); c.stroke();
+    c.beginPath(); c.moveTo(cx + 6, headY - 3); c.lineTo(cx + 16, headY - 3); c.stroke();
+  }
+  // eyebrows
+  c.strokeStyle = prof.beard ? "#bcb4a4" : "#3a2a18";
+  c.lineWidth = 2.6;
+  c.beginPath(); c.moveTo(cx - 16, headY - 10); c.quadraticCurveTo(cx - 11, headY - 13, cx - 6, headY - 10); c.stroke();
+  c.beginPath(); c.moveTo(cx + 6, headY - 10); c.quadraticCurveTo(cx + 11, headY - 13, cx + 16, headY - 10); c.stroke();
+
+  // nose
+  c.strokeStyle = "rgba(0,0,0,0.25)"; c.lineWidth = 2;
+  c.beginPath(); c.moveTo(cx, headY + 1); c.quadraticCurveTo(cx + 3, headY + 8, cx - 1, headY + 10); c.stroke();
+
+  // beard
+  if (prof.beard) {
+    c.fillStyle = "#cfc8ba";
+    c.beginPath();
+    c.moveTo(cx - R + 6, headY + 8);
+    c.quadraticCurveTo(cx, headY + R + 26, cx + R - 6, headY + 8);
+    c.quadraticCurveTo(cx + 10, headY + 18, cx, headY + 16);
+    c.quadraticCurveTo(cx - 10, headY + 18, cx - R + 6, headY + 8);
+    c.closePath(); c.fill();
+  }
+
+  // mouth — animated while talking
+  const mouthOpen = talking ? Math.abs(Math.sin(t * 11)) * 5.5 + 1 : 1.6;
+  c.fillStyle = prof.beard ? "#5a3028" : "#7a3a30";
+  c.beginPath();
+  c.ellipse(cx, headY + 17, 7, mouthOpen, 0, 0, 7);
+  c.fill();
+
+  // headwear (scaled-up versions)
+  if (p.head === "turban") {
+    c.fillStyle = p.headC;
+    c.beginPath(); c.arc(cx, headY - 8, R + 3, Math.PI, 0); c.fill();
+    c.beginPath(); c.arc(cx, headY - R - 6, 13, 0, 7); c.fill();
+    c.strokeStyle = "rgba(0,0,0,0.12)"; c.lineWidth = 2;
+    c.beginPath(); c.arc(cx, headY - 8, R - 2, Math.PI * 1.15, Math.PI * 1.85); c.stroke();
+  } else if (p.head === "hijab") {
+    c.fillStyle = p.headC;
+    c.beginPath(); c.arc(cx, headY - 2, R + 4, Math.PI * 0.82, Math.PI * 0.18); c.fill();
+    c.fillRect(cx - R - 3, headY - 2, 12, 50);
+    c.fillRect(cx + R - 9, headY - 2, 12, 50);
+  } else if (p.head === "keffiyeh") {
+    c.fillStyle = p.headC;
+    c.beginPath(); c.arc(cx, headY - 4, R + 3, Math.PI * 0.88, Math.PI * 0.12); c.fill();
+    c.fillRect(cx - R - 2, headY - 4, 11, 56);
+    c.fillStyle = "#2a2a2a";
+    c.fillRect(cx - R + 2, headY - 20, (R - 2) * 2, 7);
+  } else if (p.head === "fez") {
+    c.fillStyle = p.headC;
+    c.fillRect(cx - 19, headY - R - 22, 38, 28);
+    c.strokeStyle = "#2a2a2a"; c.lineWidth = 2.4;
+    c.beginPath(); c.moveTo(cx, headY - R - 22); c.lineTo(cx + 15, headY - R - 34); c.stroke();
+    c.fillStyle = "#2a2a2a";
+    c.beginPath(); c.arc(cx + 15, headY - R - 34, 3.4, 0, 7); c.fill();
+  }
+  c.restore();
+
+  // vignette frame
+  const v = c.createRadialGradient(70, 70, 48, 70, 70, 100);
+  v.addColorStop(0, "rgba(0,0,0,0)");
+  v.addColorStop(1, "rgba(0,0,0,0.42)");
+  c.fillStyle = v;
+  c.fillRect(0, 0, 140, 140);
 }
 
 /* ---- drawing: scenery ---- */
@@ -1243,6 +1550,21 @@ const DECOR = {
     ctx.fillStyle = "#8a6a3a";
     for (let i = 1; i < 5; i++) ctx.fillRect(x - 3, GROUND - 18 * i - 8, 6, 7);
   },
+  columns(x) {
+    ctx.fillStyle = "#e2d6b8";
+    ctx.fillRect(x - 56, GROUND - 118, 112, 10);
+    for (let i = 0; i < 4; i++) {
+      const cx2 = x - 42 + i * 28;
+      ctx.fillRect(cx2 - 6, GROUND - 108, 12, 108);
+      ctx.fillRect(cx2 - 9, GROUND - 112, 18, 7);
+      ctx.fillRect(cx2 - 9, GROUND - 8, 18, 8);
+    }
+    ctx.fillStyle = "rgba(0,0,0,0.12)";
+    for (let i = 0; i < 4; i++) {
+      const cx2 = x - 42 + i * 28;
+      ctx.fillRect(cx2 + 2, GROUND - 108, 4, 108);
+    }
+  },
   petra(x) {
     ctx.fillStyle = "#8a3a44";
     ctx.beginPath();
@@ -1425,6 +1747,8 @@ function drawGate(t) {
 function drawCoin(c2, t) {
   const bob = Math.sin(t * 3 + c2.x * 0.05) * 4;
   const y = c2.y + bob;
+  ctx.fillStyle = "rgba(0,0,0,0.15)";
+  ctx.beginPath(); ctx.ellipse(c2.x, GROUND + 3, 6, 2.5, 0, 0, 7); ctx.fill();
   ctx.fillStyle = "#f3c969";
   ctx.beginPath(); ctx.arc(c2.x, y, 8, 0, 7); ctx.fill();
   ctx.fillStyle = "#c98a2d";
@@ -1438,7 +1762,10 @@ function drawCoin(c2, t) {
 
 function drawNpc(n, t) {
   const facing = player.x < n.x ? -1 : 1;
-  drawPerson(n.x, GROUND, n.palette, Math.sin(t + n.x) * 0.3, facing);
+  const isTalking = dialog.open && dialog.npc === n;
+  // lively gesturing while speaking, gentle sway otherwise
+  const phase = isTalking ? Math.sin(t * 7) * 1.5 : Math.sin(t + n.x) * 0.3;
+  drawPerson(n.x, GROUND, n.palette, phase, facing);
   ctx.font = "12px Georgia";
   ctx.textAlign = "center";
   ctx.fillStyle = "rgba(0,0,0,0.4)";
@@ -1499,8 +1826,10 @@ function render(t) {
   for (const c2 of level.coins) if (!c2.got) drawCoin(c2, t);
   for (const n of level.npcs) drawNpc(n, t);
 
-  // player
-  drawPerson(player.x, player.y, state.character.palette, player.walkPhase, player.facing);
+  // player (small bounce while walking)
+  const bounce = (input.left || input.right) && player.onGround && !paused()
+    ? -Math.abs(Math.sin(player.walkPhase)) * 2 : 0;
+  drawPerson(player.x, player.y + bounce, state.character.palette, player.walkPhase, player.facing);
   if (state.character.falconSave && !state.falconUsed) {
     drawFalcon(player.x + Math.sin(t * 1.3) * 34, player.y - 92 + Math.sin(t * 2.4) * 9, t);
   }
@@ -1572,7 +1901,9 @@ function update(dt) {
     });
   }
 
-  camX = Math.max(0, Math.min(LEVEL_W - W, player.x - W * 0.42));
+  // smooth camera follow
+  const target = Math.max(0, Math.min(LEVEL_W - W, player.x - W * 0.42));
+  camX += (target - camX) * Math.min(1, dt * 8);
 }
 
 function jump() {
@@ -1584,6 +1915,7 @@ function jump() {
 }
 
 function startFade(onBlack) {
+  tts.stop();
   fading = { dir: 1, onBlack };
 }
 
@@ -1608,7 +1940,17 @@ function loop(ts) {
   T += dt;
   stepFade(dt);
   if (level && !paused()) update(dt);
-  if (level && state.character) render(T);
+  // camera pans to the NPC during dialogue
+  if (dialog.open && camTarget !== null) {
+    camX += (camTarget - camX) * Math.min(1, dt * 4.5);
+  }
+  stepTypewriter(dt);
+  if (level && state.character) {
+    render(T);
+    if (dialog.open && dialog.npc) {
+      drawPortrait(dialog.npc, T, tts.speaking || dialog.typing);
+    }
+  }
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
@@ -1660,10 +2002,10 @@ function buildCharacterGrid() {
     card.className = "char-card";
     const pc = document.createElement("canvas");
     pc.width = 72; pc.height = 96;
-    const pctx = pc.getContext("2d");
-    pctx.translate(36, 88);
-    pctx.scale(1.3, 1.3);
-    drawPersonShape(pctx, ch.palette, 0);
+    const pcx = pc.getContext("2d");
+    pcx.translate(36, 88);
+    pcx.scale(1.3, 1.3);
+    drawPersonShape(pcx, ch.palette, 0);
     card.appendChild(pc);
     const info = document.createElement("div");
     info.innerHTML = `
@@ -1709,48 +2051,125 @@ function loadCountry(ci) {
   $("scene-text").textContent = c.scene;
   renderHud();
   showOverlay("overlay-scene");
+  // the narrator reads the arrival scene aloud
+  tts.speak(c.scene, NARRATOR);
 }
 
-/* ---- questions ---- */
-let currentNpc = null;
+/* =====================================================
+   ANIMATED DIALOGUE
+   ===================================================== */
+const dialog = {
+  open: false,
+  npc: null,
+  phase: "scene",      // scene → question → feedback
+  typing: false,
+  fullText: "",
+  charIdx: 0,
+  answered: false,
+};
 let currentOptions = [];
-let answered = false;
 
-function openQuestion(npc) {
-  currentNpc = npc;
-  answered = false;
+const dlgEl = $("dialog");
+const dlgText = $("dlg-text");
+const dlgAnswers = $("dlg-answers");
+const dlgContinue = $("dlg-continue");
+const dlgHint = $("dlg-hint");
+
+function openDialog(npc) {
+  dialog.open = true;
+  dialog.npc = npc;
+  dialog.answered = false;
   state.hintUsedThisQuestion = false;
-  const enc = npc.enc;
-  $("enc-persona").textContent = `💬 ${enc.persona}`;
-  $("enc-scene").textContent = enc.scene;
-  $("q-text").textContent = enc.question;
-  $("feedback").className = "feedback";
-  $("btn-next").style.display = "none";
-  $("btn-hint").style.display = "block";
-  $("btn-hint").disabled = state.hints <= 0;
+  openOverlays++;
+  input.left = input.right = false;
+  player.y = GROUND; player.vy = 0;
+  player.facing = npc.x > player.x ? 1 : -1;
+  camTarget = Math.max(0, Math.min(LEVEL_W - W, npc.x - W * 0.5));
+  $("dlg-name").textContent = npc.enc.persona;
+  dlgEl.classList.add("show");
+  sfx.talk();
+  startPhase("scene");
+}
 
+function startPhase(phase) {
+  dialog.phase = phase;
+  const enc = dialog.npc.enc;
+  dlgAnswers.classList.remove("show");
+  dlgContinue.style.display = "none";
+  dlgHint.style.display = "none";
+  dlgText.className = "dialog-text";
+
+  if (phase === "scene") {
+    typeText(enc.scene);
+    tts.speak(enc.scene, dialog.npc.prof);
+  } else if (phase === "question") {
+    dlgText.classList.add("q");
+    buildAnswers(enc);
+    typeText(enc.question);
+    tts.speak(enc.question, dialog.npc.prof);
+  }
+}
+
+function typeText(text) {
+  dialog.fullText = text;
+  dialog.charIdx = 0;
+  dialog.typing = true;
+  dlgText.textContent = "";
+  dlgText.classList.add("typing");
+}
+
+function stepTypewriter(dt) {
+  if (!dialog.open || !dialog.typing) return;
+  dialog.charIdx = Math.min(dialog.fullText.length, dialog.charIdx + dt * 52);
+  dlgText.textContent = dialog.fullText.slice(0, Math.floor(dialog.charIdx));
+  if (dialog.charIdx >= dialog.fullText.length) finishTyping();
+}
+
+function finishTyping() {
+  if (!dialog.typing) return;
+  dialog.typing = false;
+  dlgText.textContent = dialog.fullText;
+  dlgText.classList.remove("typing");
+  onTypingDone();
+}
+
+function onTypingDone() {
+  if (dialog.phase === "scene") {
+    dlgContinue.textContent = "Continue ▼";
+    dlgContinue.style.display = "block";
+  } else if (dialog.phase === "question") {
+    dlgAnswers.classList.add("show");
+    dlgHint.style.display = state.hints > 0 ? "block" : "none";
+    dlgHint.disabled = state.hints <= 0;
+  } else if (dialog.phase === "feedback") {
+    // feedback text is rendered as HTML separately; nothing extra
+  }
+}
+
+function buildAnswers(enc) {
   currentOptions = shuffled(enc.options.map((text, i) => ({ text, isCorrect: i === enc.answer })));
-  const answersEl = $("answers");
-  answersEl.innerHTML = "";
+  dlgAnswers.innerHTML = "";
   currentOptions.forEach((opt, i) => {
     const btn = document.createElement("button");
     btn.className = "answer-btn";
+    btn.style.animationDelay = `${i * 0.09}s`;
     btn.textContent = `${i + 1}.  ${opt.text}`;
     btn.addEventListener("click", () => answerQuestion(btn, opt));
-    answersEl.appendChild(btn);
+    dlgAnswers.appendChild(btn);
   });
-  showOverlay("overlay-question");
 }
 
 function answerQuestion(btn, opt) {
-  if (answered) return;
-  answered = true;
-  const enc = currentNpc.enc;
+  if (dialog.answered || dialog.typing) return;
+  dialog.answered = true;
+  const npc = dialog.npc;
+  const enc = npc.enc;
   document.querySelectorAll(".answer-btn").forEach((b) => (b.disabled = true));
-  $("btn-hint").style.display = "none";
-  currentNpc.done = true;
+  dlgHint.style.display = "none";
+  npc.done = true;
+  dialog.phase = "feedback";
 
-  const fb = $("feedback");
+  let verdict;
   if (opt.isCorrect) {
     btn.classList.add("correct");
     state.correct++;
@@ -1763,9 +2182,10 @@ function answerQuestion(btn, opt) {
       bonusNote = ` 🔥 Streak of ${state.streak} — bonus gold!`;
     }
     state.gold += earned;
-    fb.classList.add("good", "show");
-    $("feedback-verdict").textContent = `✅ Correct! +${earned} gold.${bonusNote}`;
+    verdict = `✅ Correct! +${earned} gold.${bonusNote}`;
+    dlgText.className = "dialog-text good";
     sfx.correct();
+    tts.speak(`Well answered, traveler! ${enc.fact}`, npc.prof);
   } else {
     btn.classList.add("wrong");
     document.querySelectorAll(".answer-btn").forEach((b, i) => {
@@ -1773,24 +2193,34 @@ function answerQuestion(btn, opt) {
     });
     state.streak = 0;
     state.hearts--;
-    fb.classList.add("bad", "show");
     if (state.hearts <= 0 && state.character.falconSave && !state.falconUsed) {
       state.falconUsed = true;
       state.hearts = 1;
-      $("feedback-verdict").textContent = "💔 Wrong! …but Zahra's falcon swoops down and pulls you back from the brink! One heart restored. 🦅";
+      verdict = "💔 Wrong! …but Zahra's falcon swoops down and pulls you back from the brink! One heart restored. 🦅";
     } else {
-      $("feedback-verdict").textContent = "💔 Wrong! The desert takes its toll…";
+      verdict = "💔 Wrong! The desert takes its toll…";
     }
+    dlgText.className = "dialog-text bad";
     sfx.wrong();
+    tts.speak(`Ah, that is not the way. ${enc.fact}`, npc.prof);
   }
-  $("feedback-fact").textContent = enc.fact;
+
+  const v = document.createElement("span");
+  v.className = "verdict";
+  v.textContent = verdict;
+  const f = document.createElement("span");
+  f.className = "fact";
+  f.textContent = enc.fact;
+  dlgText.textContent = "";
+  dlgText.append(v, f);
+
   renderHud();
-  $("btn-next").textContent = state.hearts <= 0 ? "Face Your Fate…" : "Continue →";
-  $("btn-next").style.display = "block";
+  dlgContinue.textContent = state.hearts <= 0 ? "Face Your Fate…" : "Continue ▼";
+  dlgContinue.style.display = "block";
 }
 
 function useHint() {
-  if (state.hints <= 0 || state.hintUsedThisQuestion || answered) return;
+  if (state.hints <= 0 || state.hintUsedThisQuestion || dialog.answered) return;
   state.hints--;
   state.hintUsedThisQuestion = true;
   const wrongBtns = [];
@@ -1801,12 +2231,24 @@ function useHint() {
     b.disabled = true;
     b.classList.add("removed");
   });
-  $("btn-hint").disabled = true;
+  dlgHint.disabled = true;
   renderHud();
 }
 
-function closeQuestion() {
-  hideOverlay("overlay-question");
+function dialogAdvance() {
+  if (!dialog.open) return;
+  if (dialog.typing) { finishTyping(); return; }
+  if (dialog.phase === "scene") startPhase("question");
+  else if (dialog.phase === "feedback") closeDialog();
+}
+
+function closeDialog() {
+  dialog.open = false;
+  dialog.npc = null;
+  camTarget = null;
+  dlgEl.classList.remove("show");
+  openOverlays = Math.max(0, openOverlays - 1);
+  tts.stop();
   if (state.hearts <= 0) {
     showGameOver();
     return;
@@ -1862,6 +2304,7 @@ function victory() {
 function backToStart() {
   hideOverlay("overlay-gameover");
   hideOverlay("overlay-victory");
+  tts.stop();
   level = null;
   state.character = null;
   openOverlays = 0;
@@ -1876,14 +2319,16 @@ function backToStart() {
    ===================================================== */
 window.addEventListener("keydown", (e) => {
   const k = e.key;
-  // answer with number keys while a question is open
-  if ($("overlay-question").classList.contains("show")) {
-    if (!answered && ["1", "2", "3", "4"].includes(k)) {
-      const btns = document.querySelectorAll(".answer-btn");
+  if (dialog.open) {
+    if (dialog.phase === "question" && !dialog.typing && !dialog.answered && ["1", "2", "3", "4"].includes(k)) {
+      const btns = dlgAnswers.querySelectorAll(".answer-btn");
       const b = btns[Number(k) - 1];
       if (b && !b.disabled) b.click();
-    } else if ((k === "Enter" || k === "e" || k === "E") && answered) {
-      $("btn-next").click();
+      return;
+    }
+    if (k === "e" || k === "E" || k === "Enter" || k === " ") {
+      e.preventDefault();
+      dialogAdvance();
     }
     return;
   }
@@ -1893,7 +2338,7 @@ window.addEventListener("keydown", (e) => {
   if ((k === "ArrowUp" || k === "w" || k === "W" || k === " ") && !e.repeat) jump();
   if ((k === "e" || k === "E" || k === "Enter") && !paused()) {
     const n = nearestNpc();
-    if (n) openQuestion(n);
+    if (n) openDialog(n);
   }
 });
 window.addEventListener("keyup", (e) => {
@@ -1901,6 +2346,9 @@ window.addEventListener("keyup", (e) => {
   if (k === "ArrowLeft" || k === "a" || k === "A") input.left = false;
   if (k === "ArrowRight" || k === "d" || k === "D") input.right = false;
 });
+
+// click/tap the dialogue text to skip typing or advance
+dlgText.addEventListener("click", dialogAdvance);
 
 function bindHold(id, on, off) {
   const el = $(id);
@@ -1914,9 +2362,11 @@ bindHold("t-right", () => (input.right = true), () => (input.right = false));
 $("t-jump").addEventListener("pointerdown", (e) => { e.preventDefault(); jump(); });
 $("t-talk").addEventListener("pointerdown", (e) => {
   e.preventDefault();
-  if (!paused()) {
+  if (dialog.open) {
+    dialogAdvance();
+  } else if (!paused()) {
     const n = nearestNpc();
-    if (n) openQuestion(n);
+    if (n) openDialog(n);
   }
 });
 
@@ -1925,16 +2375,26 @@ $("t-talk").addEventListener("pointerdown", (e) => {
    ===================================================== */
 buildCharacterGrid();
 $("btn-start").addEventListener("click", startGame);
-$("btn-enter").addEventListener("click", () => hideOverlay("overlay-scene"));
-$("btn-hint").addEventListener("click", useHint);
-$("btn-next").addEventListener("click", closeQuestion);
+$("btn-enter").addEventListener("click", () => {
+  tts.stop();
+  hideOverlay("overlay-scene");
+});
+dlgHint.addEventListener("click", useHint);
+dlgContinue.addEventListener("click", dialogAdvance);
 $("btn-retry").addEventListener("click", retryCountry);
 $("btn-restart-1").addEventListener("click", backToStart);
 $("btn-restart-2").addEventListener("click", backToStart);
 $("btn-mute").addEventListener("click", () => {
   soundOn = !soundOn;
   $("btn-mute").textContent = soundOn ? "🔊" : "🔇";
+  $("btn-mute").classList.toggle("off", !soundOn);
 });
+$("btn-voice").addEventListener("click", () => {
+  tts.enabled = !tts.enabled;
+  if (!tts.enabled) tts.stop();
+  $("btn-voice").classList.toggle("off", !tts.enabled);
+});
+if (!tts.available) $("btn-voice").style.display = "none";
 </script>
 </body>
 </html>
