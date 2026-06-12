@@ -5,7 +5,7 @@ on:
     # Every 15 minutes. NOTE: GitHub only runs scheduled workflows on the
     # repository's DEFAULT branch — merge this to your default branch to
     # activate the schedule.
-    - cron: "*/15 * * * *"
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 permissions:
