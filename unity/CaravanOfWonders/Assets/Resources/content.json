@@ -1,0 +1,597 @@
+{
+  "ui": {
+    "title": { "en": "Caravan of Wonders", "ar": "قافلة العجائب" },
+    "subtitle": { "en": "A 3D Trivia Adventure Across the Arab World", "ar": "مغامرة أسئلة ثلاثية الأبعاد عبر الوطن العربي" },
+    "tagline": { "en": "From the farthest city in the West to the farthest city in the East", "ar": "من أقصى مدينة في الغرب إلى أقصى مدينة في الشرق" },
+    "chooseTraveler": { "en": "Choose your traveler", "ar": "اختر مسافرك" },
+    "begin": { "en": "Begin the Journey", "ar": "ابدأ الرحلة" },
+    "walkEast": { "en": "walk east", "ar": "سِر شرقًا" },
+    "talk": { "en": "Talk", "ar": "تحدّث" },
+    "continue": { "en": "Continue", "ar": "تابع" },
+    "hint": { "en": "Hint", "ar": "تلميح" },
+    "correct": { "en": "Correct! +{0} gold.", "ar": "إجابة صحيحة! +{0} ذهبًا." },
+    "streakBonus": { "en": "Streak of {0} — bonus gold!", "ar": "سلسلة من {0} — ذهب إضافي!" },
+    "wrong": { "en": "Wrong! The desert takes its toll…", "ar": "إجابة خاطئة! الصحراء تأخذ نصيبها…" },
+    "falconSave": { "en": "…but Zahra's falcon swoops down and saves you! One heart restored.", "ar": "…لكن صقر زهراء ينقضّ وينقذك! استعدتَ قلبًا واحدًا." },
+    "gateOpen": { "en": "The gate has opened! Walk east to {0}", "ar": "انفتحت البوابة! سِر شرقًا إلى {0}" },
+    "gateOpenFinal": { "en": "The way to Ras al-Hadd is open — walk east to the sunrise!", "ar": "الطريق إلى رأس الحد مفتوح — سِر شرقًا نحو الشروق!" },
+    "gateLocked": { "en": "answer all {0} to open", "ar": "أجب عن الألغاز الـ{0} لتُفتح البوابة" },
+    "gameOverTitle": { "en": "The Desert Claims Another Traveler", "ar": "الصحراء تبتلع مسافرًا آخر" },
+    "gameOverBody": { "en": "{0} fell to the riddles of {1}. But every great traveler knows: the caravan always rides again.", "ar": "سقط {0} أمام ألغاز {1}. لكن كل مسافر عظيم يعرف أن القافلة تمضي من جديد." },
+    "retry": { "en": "Rest & Retry {0}", "ar": "استرح وحاول مجددًا في {0}" },
+    "newJourney": { "en": "Start a New Journey", "ar": "ابدأ رحلة جديدة" },
+    "victoryTitle": { "en": "Sunrise at Sur — You Reached the Far East!", "ar": "شروق صور — وصلتَ إلى أقصى الشرق!" },
+    "victoryBody": { "en": "{0} has crossed all {1} lands — from Nouadhibou on the Atlantic to Sur on the Arabian Sea. At Ras al-Hadd, you watch the first sunrise in all the Arab world.", "ar": "عبَر {0} البلدان الـ{1} جميعها — من نواذيبو على المحيط الأطلسي إلى صور على بحر العرب. وعند رأس الحد تشاهد أول شروق للشمس في الوطن العربي كله." },
+    "goldEarned": { "en": "gold earned", "ar": "الذهب المكتسب" },
+    "riddlesSolved": { "en": "riddles solved", "ar": "الألغاز المحلولة" },
+    "bestStreak": { "en": "best streak", "ar": "أفضل سلسلة" },
+    "singWill": { "en": "The storytellers will sing of you as", "ar": "سيتغنّى الرواة باسمك:" },
+    "landsCrossed": { "en": "lands crossed", "ar": "البلدان المقطوعة" },
+    "language": { "en": "العربية", "ar": "English" },
+    "introBody": { "en": "A great caravan sets out from Nouadhibou, where the Sahara meets the Atlantic — the farthest west of the Arab world — bound for Sur on the Arabian Sea, where the sun first touches Arab soil. Eleven lands lie along the road. Walk east, speak with the people you meet, and answer their riddles. Answer well and gold will fill your pouch. Answer poorly and the desert takes its toll…", "ar": "تنطلق قافلة عظيمة من نواذيبو، حيث تلتقي الصحراء الكبرى بالمحيط الأطلسي — أقصى غرب الوطن العربي — متجهةً إلى صور على بحر العرب، حيث تلامس الشمس الأرضَ العربية أولًا. أحد عشر بلدًا على الطريق. سِر شرقًا، وتحدّث إلى من تلقاهم، وأجب عن ألغازهم. أحسِن الإجابة يمتلئ كيسك ذهبًا، وأسِئها تأخذ الصحراء نصيبها…" }
+  },
+  "characters": [
+    { "id": "rashid", "name": { "en": "Rashid", "ar": "راشد" }, "title": { "en": "the Explorer", "ar": "المستكشف" }, "perk": { "en": "Starts with 4 hearts", "ar": "يبدأ بأربعة قلوب" }, "hearts": 4, "hints": 1, "goldMult": 1, "falconSave": false },
+    { "id": "layla", "name": { "en": "Layla", "ar": "ليلى" }, "title": { "en": "the Scholar", "ar": "العالمة" }, "perk": { "en": "Carries 3 hints", "ar": "تحمل ثلاثة تلميحات" }, "hearts": 3, "hints": 3, "goldMult": 1, "falconSave": false },
+    { "id": "omar", "name": { "en": "Omar", "ar": "عمر" }, "title": { "en": "the Merchant", "ar": "التاجر" }, "perk": { "en": "Earns double gold", "ar": "يكسب ضعف الذهب" }, "hearts": 3, "hints": 1, "goldMult": 2, "falconSave": false },
+    { "id": "zahra", "name": { "en": "Zahra", "ar": "زهراء" }, "title": { "en": "the Falconer", "ar": "الصقّارة" }, "perk": { "en": "Her falcon saves her once from doom", "ar": "صقرها ينقذها مرة واحدة من الهلاك" }, "hearts": 3, "hints": 1, "goldMult": 1, "falconSave": true }
+  ],
+  "countries": [
+    {
+      "id": "mauritania",
+      "flag": "🇲🇷",
+      "name": { "en": "Mauritania", "ar": "موريتانيا" },
+      "scene": { "en": "Your journey begins at the farthest western edge of the Arab world: Nouadhibou, Mauritania, where the dunes of the Sahara tumble straight into the Atlantic Ocean. Fishermen haul painted boats up the beach, and behind them the longest train you have ever seen rumbles in from the desert. An old tea-maker waves you to his mat and pours mint tea from high in the air.", "ar": "تبدأ رحلتك من أقصى الطرف الغربي للوطن العربي: نواذيبو في موريتانيا، حيث تنحدر كثبان الصحراء الكبرى مباشرةً إلى المحيط الأطلسي. الصيادون يجرّون قواربهم الملوّنة على الشاطئ، وخلفهم يهدر قادمًا من الصحراء أطولُ قطار رأيته في حياتك. يلوّح لك صانع شاي عجوز لتجلس على حصيرته، ويصبّ الشاي بالنعناع من عَلٍ." },
+      "encounters": [
+        {
+          "persona": { "en": "Tea Maker", "ar": "صانع الشاي" },
+          "gender": "m", "elder": true, "vignette": "tea_pour",
+          "say": { "en": "Drink, traveler. The road east is longer than that train. First — show me you know whose land you stand in.", "ar": "اشرب أيها المسافر، فالطريق إلى الشرق أطول من ذلك القطار. أولًا — أرني أنك تعرف أرضَ مَن تطأ." },
+          "question": { "en": "What is the capital of Mauritania?", "ar": "ما عاصمة موريتانيا؟" },
+          "options": [
+            { "en": "Nouakchott", "ar": "نواكشوط" },
+            { "en": "Nouadhibou", "ar": "نواذيبو" },
+            { "en": "Atar", "ar": "أطار" },
+            { "en": "Rosso", "ar": "روصو" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Nouakchott grew from a small fishing village in 1958 into a capital of well over a million people — one of the youngest capitals in the Arab world.", "ar": "نمت نواكشوط من قرية صيد صغيرة عام 1958 إلى عاصمة يسكنها أكثر من مليون نسمة — وهي من أحدث العواصم في الوطن العربي." }
+        },
+        {
+          "persona": { "en": "Train Driver", "ar": "سائق القطار" },
+          "gender": "m", "elder": false, "vignette": "train_pass",
+          "say": { "en": "Look at her — the longest train on Earth! But do you know what she carries?", "ar": "انظر إليه — أطول قطار على وجه الأرض! لكن هل تعرف ماذا يحمل؟" },
+          "question": { "en": "Mauritania's famous desert train — one of the longest trains on Earth — carries what across the Sahara?", "ar": "قطار موريتانيا الصحراوي الشهير — أحد أطول قطارات العالم — ماذا يحمل عبر الصحراء؟" },
+          "options": [
+            { "en": "Iron ore", "ar": "خام الحديد" },
+            { "en": "Dates", "ar": "التمور" },
+            { "en": "Salt", "ar": "الملح" },
+            { "en": "Camels", "ar": "الجمال" }
+          ],
+          "answer": 0,
+          "fact": { "en": "The train runs ~700 km from the Zouérat mines to Nouadhibou and can stretch 2.5 km long — daring travelers ride for free on top of the ore.", "ar": "يقطع القطار نحو 700 كيلومتر من مناجم الزويرات إلى نواذيبو وقد يمتد طوله إلى كيلومترين ونصف — ويركبه المغامرون فوق الخام مجانًا." }
+        },
+        {
+          "persona": { "en": "Desert Librarian", "ar": "أمين مكتبة الصحراء" },
+          "gender": "m", "elder": true, "vignette": "show_item",
+          "say": { "en": "Look — pages of gold, older than empires. Do you know the city that guards them?", "ar": "انظر — صفحات من ذهب، أقدم من الإمبراطوريات. هل تعرف المدينة التي تحرسها؟" },
+          "question": { "en": "Which ancient caravan city in Mauritania is famous for its desert libraries of manuscripts?", "ar": "ما مدينة القوافل القديمة في موريتانيا المشهورة بمكتباتها الصحراوية للمخطوطات؟" },
+          "options": [
+            { "en": "Chinguetti", "ar": "شنقيط" },
+            { "en": "Timbuktu", "ar": "تمبكتو" },
+            { "en": "Aleg", "ar": "ألاك" },
+            { "en": "Kiffa", "ar": "كيفة" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Chinguetti's family-run libraries have preserved Quranic and scientific manuscripts since the 13th century — the city is a UNESCO World Heritage site.", "ar": "تحفظ مكتبات شنقيط العائلية مخطوطات قرآنية وعلمية منذ القرن الثالث عشر — والمدينة مدرجة في قائمة التراث العالمي لليونسكو." }
+        }
+      ]
+    },
+    {
+      "id": "morocco",
+      "flag": "🇲🇦",
+      "name": { "en": "Morocco", "ar": "المغرب" },
+      "scene": { "en": "The caravan rolls north along the coast and into Morocco. By the time you reach Marrakesh, the sun is setting over Jemaa el-Fnaa square — snake charmers pack away their flutes, and the smell of grilled meats and mint tea fills the air. An old storyteller waves you over to his lantern-lit circle.", "ar": "تتجه القافلة شمالًا على امتداد الساحل نحو المغرب. وحين تبلغ مراكش تكون الشمس تغرب فوق ساحة جامع الفنا — يلملم الحُواة مزاميرهم، وتفوح في الهواء رائحة المشاوي والشاي بالنعناع. يلوّح لك راوٍ عجوز لتنضم إلى حلقته المضاءة بالفوانيس." },
+      "encounters": [
+        {
+          "persona": { "en": "Storyteller", "ar": "الراوي" },
+          "gender": "m", "elder": true, "vignette": "generic_talk",
+          "say": { "en": "Before you may pass east, you must prove you know the lands you walk. First, a simple test — many travelers confuse our great cities…", "ar": "قبل أن تعبر شرقًا، عليك أن تثبت أنك تعرف الأرض التي تمشي عليها. أولًا اختبار بسيط — كثير من المسافرين يخلطون بين مدننا العظيمة…" },
+          "question": { "en": "What is the capital city of Morocco?", "ar": "ما العاصمة الرسمية للمغرب؟" },
+          "options": [
+            { "en": "Rabat", "ar": "الرباط" },
+            { "en": "Casablanca", "ar": "الدار البيضاء" },
+            { "en": "Marrakesh", "ar": "مراكش" },
+            { "en": "Fez", "ar": "فاس" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Casablanca is Morocco's largest city, but Rabat has been the capital since 1912.", "ar": "الدار البيضاء أكبر مدن المغرب، لكن الرباط هي العاصمة منذ عام 1912." }
+        },
+        {
+          "persona": { "en": "Young Guide", "ar": "الدليلة الشابة" },
+          "gender": "f", "elder": false, "vignette": "point_far",
+          "say": { "en": "Come, I will show you a hidden gem in the Rif Mountains. It is a city the color of the sky itself…", "ar": "تعالَ أرِكَ جوهرة مخبأة في جبال الريف. إنها مدينة بلون السماء نفسها…" },
+          "question": { "en": "Which Moroccan city is famous for its blue-painted streets and walls?", "ar": "ما المدينة المغربية المشهورة بشوارعها وجدرانها المطلية بالأزرق؟" },
+          "options": [
+            { "en": "Chefchaouen", "ar": "شفشاون" },
+            { "en": "Tangier", "ar": "طنجة" },
+            { "en": "Agadir", "ar": "أكادير" },
+            { "en": "Meknes", "ar": "مكناس" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Chefchaouen's old town is washed almost entirely in shades of blue — a tradition said to date back centuries.", "ar": "البلدة القديمة في شفشاون مصبوغة كلها تقريبًا بدرجات الأزرق — تقليد يُقال إنه يعود لقرون." }
+        },
+        {
+          "persona": { "en": "Caravan Cook", "ar": "طاهي القافلة" },
+          "gender": "m", "elder": false, "vignette": "show_item",
+          "say": { "en": "One last feast before the road — straight from my clay pot! Can you name the dish?", "ar": "وليمة أخيرة قبل الطريق — من قِدري الفخاري مباشرةً! هل تعرف اسم الطبق؟" },
+          "question": { "en": "Which slow-cooked Moroccan dish shares its name with the clay pot it is cooked in?", "ar": "ما الطبق المغربي بطيء الطهي الذي يحمل اسم القِدر الفخاري الذي يُطهى فيه؟" },
+          "options": [
+            { "en": "Tagine", "ar": "الطاجين" },
+            { "en": "Couscous", "ar": "الكسكس" },
+            { "en": "Harira", "ar": "الحريرة" },
+            { "en": "Pastilla", "ar": "البسطيلة" }
+          ],
+          "answer": 0,
+          "fact": { "en": "A tagine is both the dish and the distinctive cone-lidded pot — the shape traps steam and keeps the food tender.", "ar": "الطاجين هو الطبق والقِدر ذو الغطاء المخروطي معًا — فشكله يحبس البخار ويُبقي الطعام طريًا." }
+        }
+      ]
+    },
+    {
+      "id": "algeria",
+      "flag": "🇩🇿",
+      "name": { "en": "Algeria", "ar": "الجزائر" },
+      "scene": { "en": "East again, into Algeria — a giant of a country. The white terraces of Algiers tumble down green hills to a glittering bay, and laundry lines flutter like flags between the old casbah walls. A musician tuning his oud calls from a café doorway.", "ar": "شرقًا من جديد إلى الجزائر — بلدٌ عملاق. شرفات الجزائر العاصمة البيضاء تنحدر على تلال خضراء نحو خليج متلألئ، وحبال الغسيل ترفرف كالأعلام بين جدران القصبة العتيقة. يناديك من باب مقهى عازفُ عودٍ يدوزن آلته." },
+      "encounters": [
+        {
+          "persona": { "en": "Oud Player", "ar": "عازف العود" },
+          "gender": "m", "elder": false, "vignette": "generic_talk",
+          "say": { "en": "A song for an answer, traveler. Name the white city by the bay — our capital.", "ar": "أغنية مقابل إجابة أيها المسافر. سمِّ المدينة البيضاء على الخليج — عاصمتنا." },
+          "question": { "en": "What is the capital of Algeria?", "ar": "ما عاصمة الجزائر؟" },
+          "options": [
+            { "en": "Algiers", "ar": "الجزائر العاصمة" },
+            { "en": "Oran", "ar": "وهران" },
+            { "en": "Constantine", "ar": "قسنطينة" },
+            { "en": "Annaba", "ar": "عنابة" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Algiers is nicknamed 'Alger la Blanche' — Algiers the White — for the whitewashed buildings that cascade down to the Mediterranean.", "ar": "تُلقَّب الجزائر العاصمة بـ«الجزائر البيضاء» لمبانيها البيضاء المنحدرة نحو المتوسط." }
+        },
+        {
+          "persona": { "en": "Tuareg Nomad", "ar": "الطارقي الرحّال" },
+          "gender": "m", "elder": false, "vignette": "point_far",
+          "say": { "en": "Sand and stone to every horizon… Tell me, what record does this giant of a land hold?", "ar": "رمال وحجارة حتى كل أفق… قل لي، بأي رقم قياسي تنفرد هذه الأرض العملاقة؟" },
+          "question": { "en": "Algeria holds which record among all African and Arab countries?", "ar": "بأي رقم قياسي تنفرد الجزائر بين الدول الأفريقية والعربية كلها؟" },
+          "options": [
+            { "en": "Largest country by area", "ar": "أكبر دولة مساحةً" },
+            { "en": "Most people", "ar": "الأكثر سكانًا" },
+            { "en": "Longest river", "ar": "أطول نهر" },
+            { "en": "Highest mountain", "ar": "أعلى جبل" }
+          ],
+          "answer": 0,
+          "fact": { "en": "At over 2.3 million km², Algeria is the largest country in both Africa and the Arab world — more than four times the size of France.", "ar": "بمساحة تتجاوز 2.3 مليون كيلومتر مربع، الجزائر أكبر دولة في أفريقيا والوطن العربي — أكبر من فرنسا بأكثر من أربع مرات." }
+        },
+        {
+          "persona": { "en": "Bridge Keeper", "ar": "حارس الجسور" },
+          "gender": "m", "elder": false, "vignette": "point_far",
+          "say": { "en": "Look how the city hangs over the gorge, stitched together by bridges in the air! Do you know her name?", "ar": "انظر كيف تتعلق المدينة فوق الوادي السحيق، تخيطها جسورٌ في الهواء! هل تعرف اسمها؟" },
+          "question": { "en": "Which Algerian city, built above a dramatic gorge, is famous as the City of Bridges?", "ar": "ما المدينة الجزائرية المبنية فوق وادٍ سحيق والمعروفة بمدينة الجسور المعلقة؟" },
+          "options": [
+            { "en": "Constantine", "ar": "قسنطينة" },
+            { "en": "Tlemcen", "ar": "تلمسان" },
+            { "en": "Béjaïa", "ar": "بجاية" },
+            { "en": "Ghardaïa", "ar": "غرداية" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Constantine's bridges span the Rhumel gorge — the city has been continuously inhabited for over 2,500 years.", "ar": "تمتد جسور قسنطينة فوق وادي الرمال — وهي من أقدم المدن المأهولة باستمرار، إذ يتجاوز عمرها 2500 سنة." }
+        }
+      ]
+    },
+    {
+      "id": "tunisia",
+      "flag": "🇹🇳",
+      "name": { "en": "Tunisia", "ar": "تونس" },
+      "scene": { "en": "After days along the coast road, white-washed villages with sky-blue doors appear on the cliffs. You have reached Tunisia. A fisherman mending his nets calls out to the caravan.", "ar": "بعد أيام على طريق الساحل، تظهر على الجروف قرى بيضاء بأبواب زرقاء كلون السماء. لقد وصلتَ إلى تونس. ينادي القافلةَ صيادٌ يرتّق شباكه." },
+      "encounters": [
+        {
+          "persona": { "en": "Fisherman", "ar": "الصياد" },
+          "gender": "m", "elder": false, "vignette": "point_far",
+          "say": { "en": "These shores have seen empires rise and fall! Hannibal himself set sail from that city to challenge Rome.", "ar": "هذه الشواطئ رأت إمبراطوريات تقوم وتسقط! من تلك المدينة أبحر حنبعل بنفسه ليتحدى روما." },
+          "question": { "en": "The ruins of ancient Carthage lie just outside which modern capital city?", "ar": "أطلال قرطاج القديمة تقع عند مشارف أي عاصمة حديثة؟" },
+          "options": [
+            { "en": "Tunis", "ar": "تونس العاصمة" },
+            { "en": "Tripoli", "ar": "طرابلس" },
+            { "en": "Algiers", "ar": "الجزائر العاصمة" },
+            { "en": "Sousse", "ar": "سوسة" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Carthage, once Rome's greatest rival, sits on the outskirts of modern Tunis and is now a UNESCO World Heritage site.", "ar": "قرطاج، غريمة روما الكبرى يومًا، تقع في ضواحي تونس العاصمة وهي اليوم موقع تراث عالمي لليونسكو." }
+        },
+        {
+          "persona": { "en": "Old Sailor", "ar": "البحّار العجوز" },
+          "gender": "m", "elder": true, "vignette": "point_far",
+          "say": { "en": "Blue water to the edge of the world, traveler! Which sea do you think washes our northern shore?", "ar": "ماء أزرق حتى حافة الدنيا أيها المسافر! أي بحر تظنه يغسل ساحلنا الشمالي؟" },
+          "question": { "en": "Which sea washes the northern coast of Tunisia?", "ar": "أي بحر يغسل الساحل الشمالي لتونس؟" },
+          "options": [
+            { "en": "The Mediterranean Sea", "ar": "البحر الأبيض المتوسط" },
+            { "en": "The Red Sea", "ar": "البحر الأحمر" },
+            { "en": "The Arabian Sea", "ar": "بحر العرب" },
+            { "en": "The Atlantic Ocean", "ar": "المحيط الأطلسي" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Tunisia sits at the heart of the Mediterranean — its northern tip is closer to Sicily than to many Arab capitals.", "ar": "تقع تونس في قلب المتوسط — وطرفها الشمالي أقرب إلى صقلية من كثير من العواصم العربية." }
+        },
+        {
+          "persona": { "en": "Desert Guide", "ar": "دليل الصحراء" },
+          "gender": "m", "elder": false, "vignette": "generic_talk",
+          "say": { "en": "Filmmakers came from across the world to shoot a famous space saga right here in our desert!", "ar": "جاء صنّاع السينما من أنحاء العالم ليصوّروا ملحمة فضائية شهيرة هنا في صحرائنا!" },
+          "question": { "en": "Which southern Tunisian town lent its name to Luke Skywalker's home planet in Star Wars?", "ar": "أي بلدة في جنوب تونس أعطت اسمها لكوكب لوك سكايووكر في «حرب النجوم»؟" },
+          "options": [
+            { "en": "Tataouine", "ar": "تطاوين" },
+            { "en": "Matmata", "ar": "مطماطة" },
+            { "en": "Douz", "ar": "دوز" },
+            { "en": "Tozeur", "ar": "توزر" }
+          ],
+          "answer": 0,
+          "fact": { "en": "The desert planet 'Tatooine' was named after Tataouine, and several Star Wars sets still stand in the Tunisian desert.", "ar": "سُمّي كوكب «تاتوين» الصحراوي على اسم تطاوين، وما تزال عدة مواقع تصوير لحرب النجوم قائمة في الصحراء التونسية." }
+        }
+      ]
+    },
+    {
+      "id": "libya",
+      "flag": "🇱🇾",
+      "name": { "en": "Libya", "ar": "ليبيا" },
+      "scene": { "en": "The road bends along the Mediterranean into Libya. Heat shimmers over marble ruins standing white against the sea, and the cry of gulls mixes with wind off the dunes. A guardian of the old stones raises his staff as you approach.", "ar": "ينعطف الطريق بمحاذاة المتوسط نحو ليبيا. يرتجف الحرّ فوق أطلال رخامية بيضاء قبالة البحر، ويختلط صياح النوارس بريح قادمة من الكثبان. يرفع حارس الحجارة القديمة عصاه وأنت تقترب." },
+      "encounters": [
+        {
+          "persona": { "en": "Guardian of Ruins", "ar": "حارس الأطلال" },
+          "gender": "m", "elder": true, "vignette": "point_far",
+          "say": { "en": "Few caravans pass these days. An emperor was born here, and made this city the jewel of Africa. Prove you honor what still stands.", "ar": "قلّت القوافل التي تمرّ هذه الأيام. هنا وُلد إمبراطور جعل هذه المدينة جوهرة أفريقيا. أثبت أنك تُجِلّ ما بقي قائمًا." },
+          "question": { "en": "Which grand ancient Roman city stands on Libya's Mediterranean coast?", "ar": "ما المدينة الرومانية القديمة العظيمة القائمة على ساحل ليبيا المتوسطي؟" },
+          "options": [
+            { "en": "Leptis Magna", "ar": "لبدة الكبرى" },
+            { "en": "Palmyra", "ar": "تدمر" },
+            { "en": "Jerash", "ar": "جرش" },
+            { "en": "Volubilis", "ar": "وليلي" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Leptis Magna is one of the best-preserved Roman cities in the world — Emperor Septimius Severus, born there, filled it with monuments.", "ar": "لبدة الكبرى من أفضل المدن الرومانية حفظًا في العالم — وقد ملأها الإمبراطور سبتيموس سيفيروس، المولود فيها، بالنصب والمعالم." }
+        },
+        {
+          "persona": { "en": "Date Farmer", "ar": "مزارع التمور" },
+          "gender": "m", "elder": false, "vignette": "show_item",
+          "say": { "en": "Take dates for the road! Heading east? You will pass our capital on the sea — three cities in one, the Greeks called it.", "ar": "خذ تمرًا للطريق! متجهٌ شرقًا؟ ستمرّ بعاصمتنا على البحر — «ثلاث مدن في واحدة» كما سمّاها الإغريق." },
+          "question": { "en": "What is the capital of Libya?", "ar": "ما عاصمة ليبيا؟" },
+          "options": [
+            { "en": "Tripoli", "ar": "طرابلس" },
+            { "en": "Benghazi", "ar": "بنغازي" },
+            { "en": "Misrata", "ar": "مصراتة" },
+            { "en": "Sirte", "ar": "سرت" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Tripoli's name comes from the Greek 'Tripolis' — 'three cities' — and its walled medina still stands beside the harbor.", "ar": "اسم طرابلس من اليونانية «تريبوليس» أي المدن الثلاث — وما تزال مدينتها القديمة المسوّرة قائمة بجوار الميناء." }
+        },
+        {
+          "persona": { "en": "Oasis Keeper", "ar": "حارس الواحة" },
+          "gender": "m", "elder": true, "vignette": "generic_talk",
+          "say": { "en": "Cool as a cave at noon, our covered alleys… Do you know the pearl that hides beneath them?", "ar": "أزقّتنا المسقوفة باردة كالكهف في الظهيرة… أتعرف اللؤلؤة التي تختبئ تحتها؟" },
+          "question": { "en": "Which Libyan oasis town is known as the Pearl of the Desert?", "ar": "أي بلدة واحات ليبية تُعرف بلؤلؤة الصحراء؟" },
+          "options": [
+            { "en": "Ghadames", "ar": "غدامس" },
+            { "en": "Sabha", "ar": "سبها" },
+            { "en": "Kufra", "ar": "الكفرة" },
+            { "en": "Tobruk", "ar": "طبرق" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Ghadames' covered walkways and white houses keep it cool in the Saharan heat — the old town is a UNESCO World Heritage site.", "ar": "ممرات غدامس المسقوفة وبيوتها البيضاء تُبقيها باردة في حرّ الصحراء — وبلدتها القديمة موقع تراث عالمي لليونسكو." }
+        }
+      ]
+    },
+    {
+      "id": "egypt",
+      "flag": "🇪🇬",
+      "name": { "en": "Egypt", "ar": "مصر" },
+      "scene": { "en": "The caravan crosses into Egypt, and on the third evening you see them — the Pyramids, glowing amber in the sunset. A riverboat captain offers passage with a laugh: the Mother of the World welcomes you, but her riddles are as old as the pharaohs.", "ar": "تعبر القافلة إلى مصر، وفي المساء الثالث تراها — الأهرامات تتوهج بلون العنبر في الغروب. يعرض عليك ربّان مركبٍ نيلي أن يُقلّك ضاحكًا: أم الدنيا ترحب بك، لكن ألغازها قديمة قِدم الفراعنة." },
+      "encounters": [
+        {
+          "persona": { "en": "Boat Captain", "ar": "ربّان المركب" },
+          "gender": "m", "elder": false, "vignette": "point_far",
+          "say": { "en": "Without this river, there would be no Egypt at all.", "ar": "لولا هذا النهر لما كانت مصر أصلًا." },
+          "question": { "en": "Which river, the lifeline of Egypt, is among the longest in the world?", "ar": "ما النهر الذي يُعدّ شريان حياة مصر وأحد أطول أنهار العالم؟" },
+          "options": [
+            { "en": "The Nile", "ar": "النيل" },
+            { "en": "The Euphrates", "ar": "الفرات" },
+            { "en": "The Tigris", "ar": "دجلة" },
+            { "en": "The Jordan", "ar": "نهر الأردن" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Over 95% of Egyptians live along the Nile, though the river valley covers only a small fraction of the country's land.", "ar": "أكثر من 95% من المصريين يعيشون على ضفاف النيل، مع أن وادي النهر لا يغطي إلا جزءًا يسيرًا من مساحة البلاد." }
+        },
+        {
+          "persona": { "en": "Temple Guard", "ar": "حارس المعبد" },
+          "gender": "m", "elder": true, "vignette": "point_far",
+          "say": { "en": "Halt, traveler! None pass the Great Pyramid without answering me this.", "ar": "قف أيها المسافر! لا أحد يمرّ بالهرم الأكبر دون أن يجيبني عن هذا." },
+          "question": { "en": "On which plateau do the Great Pyramid and the Sphinx stand?", "ar": "على أي هضبة يقوم الهرم الأكبر وأبو الهول؟" },
+          "options": [
+            { "en": "The Giza Plateau", "ar": "هضبة الجيزة" },
+            { "en": "The Sinai Plateau", "ar": "هضبة سيناء" },
+            { "en": "The Aswan Plateau", "ar": "هضبة أسوان" },
+            { "en": "The Luxor Plateau", "ar": "هضبة الأقصر" }
+          ],
+          "answer": 0,
+          "fact": { "en": "The Great Pyramid of Giza is the only one of the Seven Wonders of the Ancient World still standing.", "ar": "هرم الجيزة الأكبر هو الوحيد الباقي من عجائب الدنيا السبع القديمة." }
+        },
+        {
+          "persona": { "en": "Old Scribe", "ar": "الكاتب العجوز" },
+          "gender": "m", "elder": true, "vignette": "show_item",
+          "say": { "en": "Birds, eyes, serpents and suns — the walls speak, traveler. What is this writing called?", "ar": "طيور وعيون وأفاعٍ وشموس — الجدران تتكلم أيها المسافر. فماذا تُسمّى هذه الكتابة؟" },
+          "question": { "en": "What is the ancient Egyptian writing system of pictures and symbols called?", "ar": "ماذا يُسمى نظام الكتابة المصري القديم القائم على الصور والرموز؟" },
+          "options": [
+            { "en": "Hieroglyphics", "ar": "الهيروغليفية" },
+            { "en": "Cuneiform", "ar": "المسمارية" },
+            { "en": "Calligraphy", "ar": "فن الخط" },
+            { "en": "Runes", "ar": "الرونية" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Hieroglyphics remained a mystery until the Rosetta Stone, found in Egypt in 1799, allowed scholars to finally decode them.", "ar": "ظلت الهيروغليفية لغزًا حتى عُثر على حجر رشيد في مصر عام 1799، فأتاح للعلماء فكّ رموزها أخيرًا." }
+        }
+      ]
+    },
+    {
+      "id": "jordan",
+      "flag": "🇯🇴",
+      "name": { "en": "Jordan", "ar": "الأردن" },
+      "scene": { "en": "East across the Sinai and into Jordan, where red desert cliffs rise like castle walls. A Bedouin rider on a grey mare appears beside the caravan: you ride through the land of ancient traders — let us see if you are worthy of its secrets.", "ar": "شرقًا عبر سيناء إلى الأردن، حيث تنهض جروف الصحراء الحمراء كأسوار قلعة. يظهر بجانب القافلة فارسٌ بدوي على فرس رمادية: إنك تسير في أرض التجار القدماء — فلنرَ إن كنتَ جديرًا بأسرارها." },
+      "encounters": [
+        {
+          "persona": { "en": "Bedouin Rider", "ar": "الفارس البدوي" },
+          "gender": "m", "elder": false, "vignette": "point_far",
+          "say": { "en": "Through this canyon, traveler — and behold! What do they call the rose-red city carved into the rock?", "ar": "اعبر هذا الشِّعب أيها المسافر — وانظر! ماذا يسمّون المدينة الوردية المنحوتة في الصخر؟" },
+          "question": { "en": "What is the name of this ancient city carved into rose-red rock?", "ar": "ما اسم هذه المدينة القديمة المنحوتة في الصخر الوردي؟" },
+          "options": [
+            { "en": "Petra", "ar": "البتراء" },
+            { "en": "Palmyra", "ar": "تدمر" },
+            { "en": "Jerash", "ar": "جرش" },
+            { "en": "Babylon", "ar": "بابل" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Petra was the capital of the Nabataean kingdom and is one of the New Seven Wonders of the World.", "ar": "كانت البتراء عاصمة مملكة الأنباط، وهي إحدى عجائب الدنيا السبع الجديدة." }
+        },
+        {
+          "persona": { "en": "Bedouin Elder", "ar": "الشيخ البدوي" },
+          "gender": "m", "elder": true, "vignette": "generic_talk",
+          "say": { "en": "See? I float like a feather and read my scroll! What water is this?", "ar": "أرأيت؟ أطفو كالريشة وأقرأ مخطوطي! فأيّ ماء هذا؟" },
+          "question": { "en": "Which salt lake, the lowest point on Earth's surface, lets swimmers float without effort?", "ar": "ما البحيرة المالحة، أخفضُ نقطة على سطح الأرض، التي تجعل السباحين يطفون بلا جهد؟" },
+          "options": [
+            { "en": "The Dead Sea", "ar": "البحر الميت" },
+            { "en": "The Red Sea", "ar": "البحر الأحمر" },
+            { "en": "Lake Tiberias", "ar": "بحيرة طبريا" },
+            { "en": "The Caspian Sea", "ar": "بحر قزوين" }
+          ],
+          "answer": 0,
+          "fact": { "en": "The Dead Sea's shore lies about 430 meters below sea level, and its water is nearly ten times saltier than the ocean.", "ar": "يقع شاطئ البحر الميت على عمق نحو 430 مترًا تحت مستوى سطح البحر، وملوحة مياهه تقارب عشرة أضعاف ملوحة المحيط." }
+        },
+        {
+          "persona": { "en": "City Merchant", "ar": "تاجر المدينة" },
+          "gender": "m", "elder": false, "vignette": "generic_talk",
+          "say": { "en": "White stone hills and Roman columns beside our shops — name this capital, friend!", "ar": "تلال من حجر أبيض وأعمدة رومانية بجوار دكاكيننا — سمِّ هذه العاصمة يا صديقي!" },
+          "question": { "en": "What is the capital of Jordan?", "ar": "ما عاصمة الأردن؟" },
+          "options": [
+            { "en": "Amman", "ar": "عمّان" },
+            { "en": "Aqaba", "ar": "العقبة" },
+            { "en": "Irbid", "ar": "إربد" },
+            { "en": "Zarqa", "ar": "الزرقاء" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Amman was known as Philadelphia in Roman times, and its ancient citadel still overlooks the modern city.", "ar": "كانت عمّان تُعرف باسم فيلادلفيا في العهد الروماني، وما تزال قلعتها القديمة تطل على المدينة الحديثة." }
+        }
+      ]
+    },
+    {
+      "id": "lebanon",
+      "flag": "🇱🇧",
+      "name": { "en": "Lebanon", "ar": "لبنان" },
+      "scene": { "en": "A detour north brings you to Lebanon, where snow-capped mountains tumble down to a sparkling sea. In a village café, a poet pours you coffee: small land, endless stories — answer my questions and the mountain roads will open to you.", "ar": "انعطافة شمالًا تقودك إلى لبنان، حيث تنحدر جبال متوّجة بالثلج نحو بحر متلألئ. في مقهى قروي تصبّ لك شاعرةٌ القهوة: بلد صغير وحكايات لا تنتهي — أجب عن أسئلتي تنفتح لك دروب الجبال." },
+      "encounters": [
+        {
+          "persona": { "en": "Poet", "ar": "الشاعرة" },
+          "gender": "f", "elder": false, "vignette": "point_far",
+          "say": { "en": "Look up the mountainside — those ancient wide-armed trees standing in the snow. Which tree graces our flag?", "ar": "انظر إلى أعلى الجبل — تلك الأشجار العتيقة الباسطة أذرعها في الثلج. أي شجرة تزيّن علمنا؟" },
+          "question": { "en": "Which tree, a national symbol for thousands of years, appears on Lebanon's flag?", "ar": "أي شجرة، وهي رمز وطني منذ آلاف السنين، تظهر على علم لبنان؟" },
+          "options": [
+            { "en": "The Cedar", "ar": "الأرز" },
+            { "en": "The Palm", "ar": "النخيل" },
+            { "en": "The Olive", "ar": "الزيتون" },
+            { "en": "The Fig", "ar": "التين" }
+          ],
+          "answer": 0,
+          "fact": { "en": "The Cedars of Lebanon were prized by ancient empires for shipbuilding and temples — some surviving trees are over 1,000 years old.", "ar": "كانت إمبراطوريات القِدم تتهافت على أرز لبنان لبناء السفن والمعابد — وبعض الأشجار الباقية يتجاوز عمرها ألف سنة." }
+        },
+        {
+          "persona": { "en": "Bookseller", "ar": "بائعة الكتب" },
+          "gender": "f", "elder": false, "vignette": "generic_talk",
+          "say": { "en": "They call her the city that refuses to die. Can you name her?", "ar": "يسمّونها المدينة التي ترفض أن تموت. هل تعرف اسمها؟" },
+          "question": { "en": "What is the capital of Lebanon?", "ar": "ما عاصمة لبنان؟" },
+          "options": [
+            { "en": "Beirut", "ar": "بيروت" },
+            { "en": "Tripoli", "ar": "طرابلس" },
+            { "en": "Sidon", "ar": "صيدا" },
+            { "en": "Byblos", "ar": "جبيل" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Beirut has been destroyed and rebuilt many times over its 5,000-year history, earning it the nickname 'the Phoenix city'.", "ar": "دُمّرت بيروت وأُعيد بناؤها مرات عديدة عبر تاريخها الممتد خمسة آلاف سنة، حتى لُقّبت بـ«مدينة العنقاء»." }
+        },
+        {
+          "persona": { "en": "Byblos Fisherman", "ar": "صياد جبيل" },
+          "gender": "m", "elder": false, "vignette": "show_item",
+          "say": { "en": "Purple-stained shells and the oldest letters ever written — who spread this alphabet across the sea?", "ar": "أصداف مصبوغة بالأرجوان وأقدم حروف كُتبت يومًا — مَن نشر هذه الأبجدية عبر البحر؟" },
+          "question": { "en": "Which ancient seafaring people from Lebanon's coast spread the first alphabet across the Mediterranean?", "ar": "أي شعب بحري قديم من ساحل لبنان نشر أول أبجدية عبر المتوسط؟" },
+          "options": [
+            { "en": "The Phoenicians", "ar": "الفينيقيون" },
+            { "en": "The Sumerians", "ar": "السومريون" },
+            { "en": "The Assyrians", "ar": "الآشوريون" },
+            { "en": "The Hittites", "ar": "الحثّيون" }
+          ],
+          "answer": 0,
+          "fact": { "en": "The Phoenician alphabet is the ancestor of Greek, Latin, and Arabic scripts — most alphabets used today descend from it.", "ar": "الأبجدية الفينيقية هي سلف الأبجديات اليونانية واللاتينية والعربية — ومعظم أبجديات العالم اليوم تنحدر منها." }
+        }
+      ]
+    },
+    {
+      "id": "saudi",
+      "flag": "🇸🇦",
+      "name": { "en": "Saudi Arabia", "ar": "السعودية" },
+      "scene": { "en": "Now begins the greatest test: the crossing of Arabia. Dunes tower like mountains of gold, and the stars at night seem close enough to touch. A desert guide joins you, his camel laden with water skins: the sands forgive nothing, but they reward the wise.", "ar": "الآن يبدأ الاختبار الأعظم: عبور الجزيرة العربية. كثبان تشمخ كجبال من ذهب، ونجوم الليل تبدو قريبة حدّ اللمس. ينضم إليك دليل صحراوي يحمل جملُه قِربَ الماء: الرمال لا تغفر شيئًا، لكنها تكافئ الحكماء." },
+      "encounters": [
+        {
+          "persona": { "en": "Desert Guide", "ar": "دليل الصحراء" },
+          "gender": "m", "elder": false, "vignette": "point_far",
+          "say": { "en": "Three days of sand in every direction… Do you know what they call this place?", "ar": "ثلاثة أيام من الرمال في كل اتجاه… هل تعرف بماذا يسمّون هذا المكان؟" },
+          "question": { "en": "What is the vast desert covering much of southern Saudi Arabia, the largest sand desert on Earth?", "ar": "ما الصحراء الشاسعة التي تغطي معظم جنوب السعودية، وهي أكبر صحراء رملية على وجه الأرض؟" },
+          "options": [
+            { "en": "The Rub' al Khali (Empty Quarter)", "ar": "الربع الخالي" },
+            { "en": "The Sahara", "ar": "الصحراء الكبرى" },
+            { "en": "The Gobi", "ar": "صحراء غوبي" },
+            { "en": "The An-Nafud", "ar": "صحراء النفود" }
+          ],
+          "answer": 0,
+          "fact": { "en": "The Rub' al Khali, or 'Empty Quarter', covers around 650,000 km² — larger than France — with dunes up to 250 meters tall.", "ar": "يغطي الربع الخالي نحو 650 ألف كيلومتر مربع — أكبر من فرنسا — وترتفع كثبانه حتى 250 مترًا." }
+        },
+        {
+          "persona": { "en": "Caravan Elder", "ar": "شيخ القافلة" },
+          "gender": "m", "elder": true, "vignette": "point_far",
+          "say": { "en": "They have traveled from every corner of the world, all walking the same direction with shining eyes.", "ar": "لقد جاؤوا من كل أصقاع الأرض، يمشون جميعًا في الاتجاه نفسه وعيونهم تلمع." },
+          "question": { "en": "Which holy city do millions of Muslim pilgrims travel to each year for the Hajj?", "ar": "ما المدينة المقدسة التي يقصدها ملايين الحجاج المسلمين كل عام لأداء الحج؟" },
+          "options": [
+            { "en": "Mecca", "ar": "مكة المكرمة" },
+            { "en": "Medina", "ar": "المدينة المنورة" },
+            { "en": "Jeddah", "ar": "جدة" },
+            { "en": "Taif", "ar": "الطائف" }
+          ],
+          "answer": 0,
+          "fact": { "en": "The Hajj pilgrimage to Mecca is one of the five pillars of Islam, drawing around two million pilgrims every year.", "ar": "الحج إلى مكة المكرمة أحد أركان الإسلام الخمسة، ويؤدّيه نحو مليوني حاج كل عام." }
+        },
+        {
+          "persona": { "en": "Tower Guide", "ar": "دليل الأبراج" },
+          "gender": "m", "elder": false, "vignette": "point_far",
+          "say": { "en": "Towers of glass where oases once stood! What is this capital called?", "ar": "أبراج من زجاج حيث كانت الواحات يومًا! فما اسم هذه العاصمة؟" },
+          "question": { "en": "What is the capital of Saudi Arabia?", "ar": "ما عاصمة المملكة العربية السعودية؟" },
+          "options": [
+            { "en": "Riyadh", "ar": "الرياض" },
+            { "en": "Jeddah", "ar": "جدة" },
+            { "en": "Dammam", "ar": "الدمام" },
+            { "en": "Abha", "ar": "أبها" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Riyadh means 'the gardens' in Arabic — it grew from a cluster of desert oases into a city of over 7 million people.", "ar": "«الرياض» جمع روضة — وقد نمت من مجموعة واحات صحراوية إلى مدينة يسكنها أكثر من سبعة ملايين نسمة." }
+        }
+      ]
+    },
+    {
+      "id": "uae",
+      "flag": "🇦🇪",
+      "name": { "en": "United Arab Emirates", "ar": "الإمارات" },
+      "scene": { "en": "The caravan reaches the Gulf coast, where fishing villages of old have become cities of mirrored towers. A pearl diver turned businessman laughs at your dusty clothes: from sand to skyline in one lifetime! But tell me — do you truly know this land?", "ar": "تبلغ القافلة ساحل الخليج، حيث صارت قرى الصيد القديمة مدنًا من أبراج المرايا. يضحك من ثيابك المغبرّة غوّاصُ لؤلؤ تحوّل إلى رجل أعمال: من الرمال إلى ناطحات السحاب في عمرٍ واحد! لكن قل لي — هل تعرف هذه الأرض حقًا؟" },
+      "encounters": [
+        {
+          "persona": { "en": "Pearl Diver", "ar": "غوّاص اللؤلؤ" },
+          "gender": "m", "elder": false, "vignette": "point_far",
+          "say": { "en": "Look up — and up, and up! What do they call that silver needle piercing the clouds?", "ar": "انظر إلى الأعلى — ثم أعلى وأعلى! ماذا يسمّون تلك الإبرة الفضية التي تخترق الغيوم؟" },
+          "question": { "en": "What is the name of the world's tallest building, standing in Dubai?", "ar": "ما اسم أطول بناء في العالم، القائم في دبي؟" },
+          "options": [
+            { "en": "Burj Khalifa", "ar": "برج خليفة" },
+            { "en": "Burj Al Arab", "ar": "برج العرب" },
+            { "en": "Etihad Tower", "ar": "برج الاتحاد" },
+            { "en": "Kingdom Tower", "ar": "برج المملكة" }
+          ],
+          "answer": 0,
+          "fact": { "en": "The Burj Khalifa rises 828 meters — on a clear day, you can watch the sunset from the base, ride up, and watch it set again.", "ar": "يرتفع برج خليفة 828 مترًا — في يوم صافٍ يمكنك مشاهدة الغروب من أسفله ثم الصعود لمشاهدته يغرب من جديد." }
+        },
+        {
+          "persona": { "en": "City Guide", "ar": "دليلة المدينة" },
+          "gender": "f", "elder": false, "vignette": "generic_talk",
+          "say": { "en": "Many visitors think the famous city of towers is our capital — but they are mistaken.", "ar": "كثير من الزوار يظنون أن مدينة الأبراج الشهيرة هي عاصمتنا — لكنهم مخطئون." },
+          "question": { "en": "What is the capital of the United Arab Emirates?", "ar": "ما عاصمة الإمارات العربية المتحدة؟" },
+          "options": [
+            { "en": "Abu Dhabi", "ar": "أبوظبي" },
+            { "en": "Dubai", "ar": "دبي" },
+            { "en": "Sharjah", "ar": "الشارقة" },
+            { "en": "Ajman", "ar": "عجمان" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Abu Dhabi is both the capital and the largest emirate, covering about 87% of the UAE's total land area.", "ar": "أبوظبي هي العاصمة وأكبر الإمارات، إذ تغطي نحو 87% من مساحة الدولة." }
+        },
+        {
+          "persona": { "en": "Majlis Host", "ar": "صاحب المجلس" },
+          "gender": "m", "elder": true, "vignette": "show_item",
+          "say": { "en": "Seven coffee cups, set in a circle — one for each founding brother of this union.", "ar": "سبعة فناجين قهوة في حلقة — فنجان لكل أخ من الإخوة المؤسسين لهذا الاتحاد." },
+          "question": { "en": "How many emirates make up the United Arab Emirates?", "ar": "كم إمارة تتألف منها دولة الإمارات العربية المتحدة؟" },
+          "options": [
+            { "en": "Seven", "ar": "سبع" },
+            { "en": "Five", "ar": "خمس" },
+            { "en": "Six", "ar": "ست" },
+            { "en": "Nine", "ar": "تسع" }
+          ],
+          "answer": 0,
+          "fact": { "en": "The seven emirates united in 1971–72: Abu Dhabi, Dubai, Sharjah, Ajman, Umm Al Quwain, Fujairah, and Ras Al Khaimah.", "ar": "اتحدت الإمارات السبع بين عامي 1971 و1972: أبوظبي ودبي والشارقة وعجمان وأم القيوين والفجيرة ورأس الخيمة." }
+        }
+      ]
+    },
+    {
+      "id": "oman",
+      "flag": "🇴🇲",
+      "name": { "en": "Oman", "ar": "عُمان" },
+      "scene": { "en": "The final road winds between jagged mountains and a turquoise sea. The air smells of salt and something sweeter — incense. An Omani sailor welcomes the caravan at the gates of Muscat: the end of your road lies beyond — Sur, the far east of the Arab world, where the sun rises first. Three last riddles stand between you and the dawn.", "ar": "يتعرّج الطريق الأخير بين جبال وعرة وبحر فيروزي. في الهواء رائحة ملح وشيء أحلى — البخور. يستقبل بحّار عماني القافلة عند أبواب مسقط: نهايةُ طريقك أبعد من هنا — صور، أقصى شرق الوطن العربي، حيث تشرق الشمس أولًا. ثلاثة ألغاز أخيرة تفصلك عن الفجر." },
+      "encounters": [
+        {
+          "persona": { "en": "Omani Sailor", "ar": "البحّار العماني" },
+          "gender": "m", "elder": false, "vignette": "point_far",
+          "say": { "en": "White houses, old forts, and dhows at anchor — name this harbor city!", "ar": "بيوت بيضاء وقلاع قديمة وسفن راسية — سمِّ مدينة الميناء هذه!" },
+          "question": { "en": "What is the capital of Oman?", "ar": "ما عاصمة سلطنة عُمان؟" },
+          "options": [
+            { "en": "Muscat", "ar": "مسقط" },
+            { "en": "Salalah", "ar": "صلالة" },
+            { "en": "Nizwa", "ar": "نزوى" },
+            { "en": "Sur", "ar": "صور" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Muscat has been a vital trading port between East and West for over 2,000 years, guarded by its twin 16th-century forts.", "ar": "ظلت مسقط ميناءً تجاريًا حيويًا بين الشرق والغرب لأكثر من ألفي سنة، تحرسها قلعتاها التوأمان من القرن السادس عشر." }
+        },
+        {
+          "persona": { "en": "Souq Merchant", "ar": "تاجر السوق" },
+          "gender": "m", "elder": false, "vignette": "show_item",
+          "say": { "en": "Smell that smoke, traveler? For thousands of years, this was worth more than gold.", "ar": "أتشمّ هذا الدخان أيها المسافر؟ لآلاف السنين كان هذا أغلى من الذهب." },
+          "question": { "en": "Which fragrant tree resin has Oman famously traded since ancient times?", "ar": "ما الصمغ الشجري العطري الذي اشتهرت عُمان بتجارته منذ القِدم؟" },
+          "options": [
+            { "en": "Frankincense", "ar": "اللبان" },
+            { "en": "Myrrh", "ar": "المُرّ" },
+            { "en": "Amber", "ar": "العنبر" },
+            { "en": "Sandalwood", "ar": "خشب الصندل" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Omani frankincense from Dhofar was carried along ancient trade routes to Rome, Persia, and China — the 'Land of Frankincense' is a UNESCO site.", "ar": "حُمل اللبان العماني من ظفار على طرق التجارة القديمة إلى روما وفارس والصين — و«أرض اللبان» موقع تراث عالمي لليونسكو." }
+        },
+        {
+          "persona": { "en": "Shipwright of Sur", "ar": "نجّار سفن صور" },
+          "gender": "m", "elder": true, "vignette": "show_item",
+          "say": { "en": "By hand, as my fathers did for a thousand years… What ships do we build here in Sur?", "ar": "بأيدينا، كما فعل آبائي ألف سنة… أي سفن نبنيها هنا في صور؟" },
+          "question": { "en": "Sur is famous for hand-building which traditional Arab sailing ships?", "ar": "بأي سفن شراعية عربية تقليدية تشتهر صور ببنائها يدويًا؟" },
+          "options": [
+            { "en": "Dhows", "ar": "سفن الداو" },
+            { "en": "Feluccas", "ar": "الفلوكة" },
+            { "en": "Junks", "ar": "سفن الجنك" },
+            { "en": "Galleys", "ar": "القوادس" }
+          ],
+          "answer": 0,
+          "fact": { "en": "Sur's shipyards have built wooden dhows for centuries — and at nearby Ras al-Hadd, the easternmost cape, the sun rises on the Arab world before anywhere else.", "ar": "تبني أحواض صور سفن الداو الخشبية منذ قرون — وعند رأس الحد القريبة، أقصى نقطة شرقًا، تشرق الشمس على الوطن العربي قبل أي مكان آخر." }
+        }
+      ]
+    }
+  ],
+  "ranks": [
+    { "min": 0.95, "name": { "en": "The Legend of the Caravan", "ar": "أسطورة القافلة" }, "line": { "en": "Storytellers from Nouadhibou to Sur will speak your name for generations.", "ar": "سيردّد الرواة اسمك من نواذيبو إلى صور لأجيال." } },
+    { "min": 0.8, "name": { "en": "Master Navigator of the Sands", "ar": "ربّان الرمال الأمهر" }, "line": { "en": "Few travelers know these lands as well as you.", "ar": "قلّة من المسافرين يعرفون هذه البلاد كما تعرفها أنت." } },
+    { "min": 0.6, "name": { "en": "Seasoned Wayfarer", "ar": "رحّالة محنّك" }, "line": { "en": "You stumbled here and there, but the road respects you.", "ar": "تعثرتَ هنا وهناك، لكن الطريق يحترمك." } },
+    { "min": 0.0, "name": { "en": "Brave Wanderer", "ar": "جوّاب شجاع" }, "line": { "en": "You survived the journey — next time, the riddles will fear YOU.", "ar": "نجوتَ من الرحلة — وفي المرة القادمة، الألغاز هي التي ستخافك." } }
+  ]
+}

@@ -1,5 +1,11 @@
 # ✨ Caravan of Wonders — من أقصى الغرب إلى أقصى الشرق
 
+> **🎮 The publishable 3D edition now lives in [`unity/`](unity/README.md)** —
+> a bilingual (Arabic/English) Unity project with stylized low-poly 3D, smooth
+> 2D→3D camera transitions, animated scene vignettes (the tea-maker really
+> pours!), and an ElevenLabs voice pipeline. This page describes the original
+> 2D browser prototype (`index.html`), which remains fully playable.
+
 A **2D trivia adventure across the Arab world** — from the farthest city in the
 west to the farthest city in the east. Your traveler walks through a living 2D
 world: from **Nouadhibou, Mauritania**, where the Sahara meets the Atlantic, all
