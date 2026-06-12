@@ -1,8 +1,11 @@
-# Trump → Gold Alert Bot 🥇
+# Trump → Gold Alert Bot 🥇 (100% free)
 
-Watches for new Trump statements/actions (like the "not bombing Iran" news),
-asks Claude how gold (XAU/USD) is likely to react, and sends you an alert by
-email and/or Telegram.
+Watches for new Trump statements/actions (like the "calling off the Iran
+strikes" news), scores how gold (XAU/USD) is likely to react, and sends you
+an alert by Telegram and/or email.
+
+**Everything is free**: GitHub Actions (runner), Google News RSS (headlines),
+gold-api.com (gold price), Telegram (notifications). No paid API keys.
 
 ## How it works
 
@@ -12,10 +15,20 @@ Every 15 minutes a GitHub Actions job:
 2. Skips anything it already alerted on (state in `seen_items.json`).
 3. Keeps only headlines matching gold-relevant keywords (Iran, strike,
    tariff, Fed, sanctions, war, rates, dollar, ...).
-4. Sends the new ones to Claude, which returns for each: **bullish /
-   bearish / neutral for gold**, a confidence level, and 2-3 sentences of
-   reasoning (safe-haven demand, USD, rates, tariffs/inflation).
-5. If anything is judged market-moving, you get a notification.
+4. Scores each one with a built-in rules engine:
+
+   | Story type | Gold call | Why |
+   |---|---|---|
+   | De-escalation (calls off strikes, ceasefire, peace deal) | 📉 BEARISH | Safe-haven bid unwinds |
+   | Escalation (strikes, attack, war, missiles, troops) | 📈 BULLISH | Safe-haven demand spikes |
+   | Tariffs / sanctions / trade war | 📈 BULLISH | Inflation + uncertainty |
+   | Pressure on the Fed / rate-cut talk | 📈 BULLISH | Weaker dollar, lower real yields |
+   | Shutdown / debt-ceiling / emergency | 📈 BULLISH (weak) | Fiscal uncertainty |
+
+   De-escalation is checked **first**, so "Trump calls off strikes on Iran"
+   is correctly read as bearish even though it contains the word "strikes".
+5. Sends one notification per story type per 6 hours (so 20 outlets
+   covering the same story don't mean 20 pings).
 
 The very first run only seeds the state (no alerts), so you don't get
 spammed with old news.
@@ -25,19 +38,22 @@ spammed with old news.
 ### 1. Add repository secrets
 
 GitHub → your repo → **Settings → Secrets and variables → Actions →
-New repository secret**:
+New repository secret**. You need at least one channel:
 
-| Secret | Required | What it is |
-|---|---|---|
-| `ANTHROPIC_API_KEY` | ✅ | Claude API key from https://platform.claude.com |
-| `GMAIL_ADDRESS` | for email | Your Gmail address (sender) |
-| `GMAIL_APP_PASSWORD` | for email | A Gmail **app password** — NOT your normal password. Create one at https://myaccount.google.com/apppasswords (requires 2-step verification enabled) |
-| `ALERT_EMAIL_TO` | optional | Where to send alerts; defaults to `GMAIL_ADDRESS` |
-| `TELEGRAM_BOT_TOKEN` | optional | For instant phone push — message @BotFather on Telegram, send `/newbot`, copy the token |
-| `TELEGRAM_CHAT_ID` | optional | Message your new bot once, then open `https://api.telegram.org/bot<TOKEN>/getUpdates` and copy `chat.id` |
+**Telegram (recommended — instant phone push, free):**
 
-You need at least one channel configured (email or Telegram). **Telegram is
-recommended** — it arrives as a phone push within seconds; email can lag.
+| Secret | How to get it |
+|---|---|
+| `TELEGRAM_BOT_TOKEN` | Message **@BotFather** on Telegram, send `/newbot`, follow the prompts, copy the token |
+| `TELEGRAM_CHAT_ID` | Send any message to your new bot, then open `https://api.telegram.org/bot<TOKEN>/getUpdates` in a browser and copy the `"chat":{"id":...}` number |
+
+**Email (optional):**
+
+| Secret | How to get it |
+|---|---|
+| `GMAIL_ADDRESS` | Your Gmail address (used as sender) |
+| `GMAIL_APP_PASSWORD` | A Gmail **app password** — NOT your normal password. Create at https://myaccount.google.com/apppasswords (requires 2-step verification) |
+| `ALERT_EMAIL_TO` | Optional; defaults to `GMAIL_ADDRESS` |
 
 ### 2. Activate the schedule
 
@@ -46,14 +62,26 @@ Merge this branch into your default branch (e.g. `main`) to start the
 15-minute cron. You can also test immediately from any branch:
 **Actions → Trump Gold Alert Bot → Run workflow**.
 
+> Note: public repos get unlimited free Actions minutes. Private repos get
+> 2,000 free minutes/month — if this repo is private, change the cron in
+> `.github/workflows/trump-gold-bot.yml` to `"*/30 * * * *"` to stay well
+> inside the free tier. By default GitHub just stops (doesn't charge) if
+> you run out.
+
 ### 3. Run it locally (optional)
 
 ```bash
 pip install -r bot/requirements.txt
-export ANTHROPIC_API_KEY=sk-ant-...
 export TELEGRAM_BOT_TOKEN=... TELEGRAM_CHAT_ID=...   # or GMAIL_* vars
 python bot/trump_gold_bot.py
 ```
+
+## Tuning
+
+- Add/remove trigger words in `KEYWORDS` (what counts as relevant at all).
+- Add patterns to `RULES` in `trump_gold_bot.py` (what fires an alert and
+  in which direction). First matching rule wins.
+- `ALERT_COOLDOWN_HOURS` controls how often the same story type can re-alert.
 
 ## ⚠️ Read this before trusting it with money
 
@@ -62,10 +90,11 @@ python bot/trump_gold_bot.py
   free news bot) alerts you, the initial move has almost always happened.
   Use the alerts for **situational awareness and managing open positions** —
   not as entry signals.
-- **The analysis can be wrong.** It's a model's best read of likely
-  direction, not a prediction. "De-escalation = bearish gold" is the usual
-  pattern, but markets routinely do the opposite of the textbook.
+- **Rules are simple-minded.** This engine matches words, it doesn't
+  understand context. It will sometimes call the direction wrong or alert
+  on sarcasm/opinion pieces. Markets also routinely do the opposite of the
+  textbook.
 - **Protect yourself structurally**: if one headline can wipe out most of
   your account, the position was too big. Use stop losses and size positions
-  so a single Trump tweet can't take you out.
+  so a single Trump headline can't take you out.
 - Not financial advice.

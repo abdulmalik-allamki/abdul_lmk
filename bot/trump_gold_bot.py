@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""Trump -> gold market alert bot.
+"""Trump -> gold market alert bot (100% free, no API keys for analysis).
 
 Pulls fresh Trump-related headlines from Google News RSS, filters for
-market-relevant ones, asks Claude to assess the likely impact on gold
-(XAU/USD), and sends an alert via email and/or Telegram.
+market-relevant ones, scores the likely impact on gold (XAU/USD) with a
+built-in rules engine, and sends an alert via email and/or Telegram.
 
 Designed to run on a schedule (GitHub Actions cron). State (already-seen
-headlines) is kept in seen_items.json next to this script and committed
-back by the workflow so reruns don't re-alert on the same news.
+headlines + recently-sent alert types) is kept in seen_items.json next to
+this script and committed back by the workflow so reruns don't re-alert
+on the same news.
 
-Environment variables:
-  ANTHROPIC_API_KEY     required - Claude API key
-  GMAIL_ADDRESS         optional - Gmail address used to send the alert
-  GMAIL_APP_PASSWORD    optional - Gmail "app password" (not your login password)
-  ALERT_EMAIL_TO        optional - recipient; defaults to GMAIL_ADDRESS
-  TELEGRAM_BOT_TOKEN    optional - Telegram bot token for push alerts
-  TELEGRAM_CHAT_ID      optional - Telegram chat to send alerts to
+Environment variables (only needed for the channel you use):
+  GMAIL_ADDRESS         Gmail address used to send the alert
+  GMAIL_APP_PASSWORD    Gmail "app password" (not your login password)
+  ALERT_EMAIL_TO        recipient; defaults to GMAIL_ADDRESS
+  TELEGRAM_BOT_TOKEN    Telegram bot token for push alerts
+  TELEGRAM_CHAT_ID      Telegram chat to send alerts to
 
 NOT FINANCIAL ADVICE. Markets typically reprice within seconds of a major
 headline, before any bot can alert you. Use this for awareness and risk
@@ -27,17 +27,18 @@ import os
 import smtplib
 import sys
 import xml.etree.ElementTree as ET
+from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 from email.mime.text import MIMEText
 from pathlib import Path
-from typing import List, Literal
 
 import requests
-from pydantic import BaseModel
-
-import anthropic
 
 STATE_FILE = Path(__file__).parent / "seen_items.json"
 MAX_SEEN = 800
+# Don't repeat an alert for the same story type (e.g. "bearish/de-escalation")
+# more than once per this window, even as more outlets cover it.
+ALERT_COOLDOWN_HOURS = 6
 
 FEEDS = [
     # Broad Trump news from the last day
@@ -45,8 +46,7 @@ FEEDS = [
 ]
 
 # A headline must contain at least one of these (case-insensitive) to be
-# considered potentially market-moving for gold. Keeps API costs down and
-# noise out.
+# considered potentially market-moving for gold. Keeps noise out.
 KEYWORDS = [
     "iran", "israel", "strike", "attack", "bomb", "military", "war",
     "ceasefire", "missile", "nuclear",
@@ -56,28 +56,113 @@ KEYWORDS = [
     "oil", "gold", "executive order", "troops", "deploy",
 ]
 
+# Rules are checked in order; the FIRST match wins. De-escalation comes
+# before escalation on purpose: "Trump calls off strikes on Iran" contains
+# the word "strikes" but is de-escalation news (bearish for gold).
+RULES = [
+    {
+        "name": "de-escalation",
+        "impact": "bearish",
+        "confidence": "high",
+        "patterns": [
+            "calls off", "called off", "cancels", "canceled", "cancelled",
+            "ceasefire", "cease-fire", "peace deal", "peace agreement",
+            "truce", "de-escalat", "deal to end", "ends war", "end the war",
+            "deal is near", "deal is close", "halts strikes", "halt strikes",
+            "backs off", "backs down", "stands down", "calls for calm",
+            "agreement reached", "tensions ease",
+        ],
+        "reasoning": (
+            "De-escalation kills the safe-haven bid: gold typically SELLS OFF "
+            "when war risk fades. If you're long gold on geopolitical fear, "
+            "this is the headline that unwinds it — and the first leg of the "
+            "move usually happens within seconds."
+        ),
+    },
+    {
+        "name": "escalation",
+        "impact": "bullish",
+        "confidence": "high",
+        "patterns": [
+            "strike", "strikes", "attack", "bomb", "bombing", "missile",
+            "military action", "military operation", "declares war",
+            "war with", "invasion", "invades", "troops", "deploys",
+            "nuclear", "retaliat", "threatens to", "ultimatum",
+        ],
+        "reasoning": (
+            "Escalation drives safe-haven demand: gold typically RALLIES on "
+            "war/strike threats. Watch for the reverse move if Trump later "
+            "walks it back — these spikes often fully unwind on de-escalation."
+        ),
+    },
+    {
+        "name": "tariffs-sanctions",
+        "impact": "bullish",
+        "confidence": "medium",
+        "patterns": [
+            "tariff", "sanction", "trade war", "export ban", "import ban",
+            "trade restrictions",
+        ],
+        "reasoning": (
+            "Tariffs and sanctions raise inflation expectations and economic "
+            "uncertainty — historically supportive for gold, though the move "
+            "is usually slower and smaller than a war headline."
+        ),
+    },
+    {
+        "name": "fed-pressure",
+        "impact": "bullish",
+        "confidence": "medium",
+        "patterns": [
+            "fires powell", "fire powell", "firing powell", "replace powell",
+            "rate cut", "cut rates", "cuts rates", "lower rates",
+            "lower interest", "slams fed", "slams powell", "pressures fed",
+            "attacks fed", "blasts fed", "blasts powell",
+        ],
+        "reasoning": (
+            "Pressure on the Fed / rate-cut talk weakens the dollar and "
+            "lowers real yields — both bullish for gold. Threats to Fed "
+            "independence add an extra fear premium."
+        ),
+    },
+    {
+        "name": "fiscal-stress",
+        "impact": "bullish",
+        "confidence": "low",
+        "patterns": [
+            "shutdown", "debt ceiling", "default on", "debt crisis",
+            "national emergency",
+        ],
+        "reasoning": (
+            "Fiscal stress and emergency politics tend to support gold "
+            "modestly via uncertainty and dollar weakness."
+        ),
+    },
+]
 
-class HeadlineAnalysis(BaseModel):
+
+@dataclass
+class Alert:
     headline: str
-    market_moving: bool
-    gold_impact: Literal["bullish", "bearish", "neutral"]
-    confidence: Literal["low", "medium", "high"]
+    link: str
+    rule: str
+    impact: str       # bullish | bearish
+    confidence: str   # low | medium | high
     reasoning: str
 
 
-class GoldAnalysis(BaseModel):
-    items: List[HeadlineAnalysis]
-    overall_summary: str
-
-
-def load_seen() -> list:
+def load_state() -> dict:
     if STATE_FILE.exists():
-        return json.loads(STATE_FILE.read_text())
-    return []
+        data = json.loads(STATE_FILE.read_text())
+        if isinstance(data, list):  # migrate old list-only format
+            return {"seen": data, "recent_alerts": {}}
+        return data
+    return {"seen": [], "recent_alerts": {}}
 
 
-def save_seen(seen: list) -> None:
-    STATE_FILE.write_text(json.dumps(seen[-MAX_SEEN:], indent=0) + "\n")
+def save_state(state: dict) -> None:
+    state["seen"] = state["seen"][-MAX_SEEN:]
+    STATE_FILE.write_text(json.dumps(state, indent=0) + "\n")
 
 
 def fetch_headlines() -> list:
@@ -107,6 +192,22 @@ def is_relevant(title: str) -> bool:
     return any(kw in lower for kw in KEYWORDS)
 
 
+def analyze_headline(item: dict) -> Alert | None:
+    """First matching rule wins; returns None if no rule matches."""
+    lower = item["title"].lower()
+    for rule in RULES:
+        if any(p in lower for p in rule["patterns"]):
+            return Alert(
+                headline=item["title"],
+                link=item["link"],
+                rule=rule["name"],
+                impact=rule["impact"],
+                confidence=rule["confidence"],
+                reasoning=rule["reasoning"],
+            )
+    return None
+
+
 def get_gold_spot() -> float | None:
     """Current gold price in USD from free keyless APIs. Best-effort."""
     try:
@@ -129,64 +230,41 @@ def get_gold_spot() -> float | None:
         return None
 
 
-def analyze(headlines: list, gold_price: float | None) -> GoldAnalysis:
-    client = anthropic.Anthropic()
-
-    price_note = (
-        f"Current gold spot (XAU/USD) is approximately ${gold_price:,.2f}."
-        if gold_price else
-        "Current gold spot price is unavailable."
-    )
-    headline_block = "\n".join(
-        f"- {h['title']} (published: {h['published']})" for h in headlines
-    )
-
-    response = client.messages.parse(
-        model="claude-opus-4-8",
-        max_tokens=16000,
-        thinking={"type": "adaptive"},
-        system=(
-            "You are a macro analyst specializing in gold (XAU/USD). You assess "
-            "how political headlines - especially statements and actions by "
-            "Donald Trump - are likely to move gold. Consider the standard "
-            "transmission channels: geopolitical risk and safe-haven demand "
-            "(escalation is typically bullish for gold, de-escalation bearish), "
-            "USD strength, Fed policy and rate expectations, tariffs and "
-            "inflation expectations, and fiscal deficits. Mark market_moving "
-            "true only for headlines plausibly large enough to move gold; mark "
-            "duplicates of the same underlying story only once. Keep each "
-            "reasoning to 2-3 plain sentences a retail trader can act on, and "
-            "note when the move has likely already been priced in."
-        ),
-        messages=[{
-            "role": "user",
-            "content": (
-                f"{price_note}\n\n"
-                "Assess the likely gold impact of each fresh Trump headline "
-                f"below:\n\n{headline_block}"
-            ),
-        }],
-        output_format=GoldAnalysis,
-    )
-    return response.parsed_output
+def filter_cooldown(alerts: list[Alert], state: dict) -> list[Alert]:
+    """Drop alerts whose story type already fired within the cooldown window,
+    so 20 outlets covering the same story don't mean 20 notifications."""
+    now = datetime.now(timezone.utc)
+    cutoff = now - timedelta(hours=ALERT_COOLDOWN_HOURS)
+    recent = {
+        sig: ts for sig, ts in state.get("recent_alerts", {}).items()
+        if datetime.fromisoformat(ts) > cutoff
+    }
+    fresh = []
+    for alert in alerts:
+        sig = f"{alert.impact}|{alert.rule}"
+        if sig in recent:
+            continue
+        recent[sig] = now.isoformat()
+        fresh.append(alert)
+    state["recent_alerts"] = recent
+    return fresh
 
 
-def format_alert(flagged: List[HeadlineAnalysis], summary: str,
-                 gold_price: float | None) -> tuple[str, str]:
-    arrows = {"bullish": "📈 BULLISH", "bearish": "📉 BEARISH", "neutral": "➖ NEUTRAL"}
-    top = flagged[0]
-    subject = f"🥇 Gold Alert: {arrows[top.gold_impact]} — {top.headline[:80]}"
+def format_alert(alerts: list[Alert], gold_price: float | None) -> tuple[str, str]:
+    arrows = {"bullish": "📈 BULLISH", "bearish": "📉 BEARISH"}
+    top = alerts[0]
+    subject = f"🥇 Gold Alert: {arrows[top.impact]} — {top.headline[:80]}"
 
     lines = ["TRUMP → GOLD ALERT", ""]
     if gold_price:
         lines.append(f"Gold spot now: ${gold_price:,.2f}")
         lines.append("")
-    lines.append(f"Summary: {summary}")
-    lines.append("")
-    for item in flagged:
-        lines.append(f"{arrows[item.gold_impact]} ({item.confidence} confidence)")
-        lines.append(f"Headline: {item.headline}")
-        lines.append(f"Analysis: {item.reasoning}")
+    for alert in alerts[:6]:
+        lines.append(f"{arrows[alert.impact]} ({alert.confidence} confidence — {alert.rule})")
+        lines.append(f"Headline: {alert.headline}")
+        lines.append(f"Why: {alert.reasoning}")
+        if alert.link:
+            lines.append(f"Link: {alert.link}")
         lines.append("")
     lines.append("—" * 30)
     lines.append(
@@ -231,33 +309,32 @@ def send_telegram(body: str) -> bool:
 
 def main() -> int:
     first_run = not STATE_FILE.exists()
-    seen = load_seen()
-    seen_set = set(seen)
+    state = load_state()
+    seen_set = set(state["seen"])
 
     items = fetch_headlines()
     print(f"Fetched {len(items)} feed items")
 
     new_items = [i for i in items if i["id"] not in seen_set]
-    seen.extend(i["id"] for i in new_items)
-    save_seen(seen)
+    state["seen"].extend(i["id"] for i in new_items)
 
     if first_run:
+        save_state(state)
         print("First run: seeded state with current headlines, no alerts sent.")
         return 0
 
     relevant = [i for i in new_items if is_relevant(i["title"])]
     print(f"{len(new_items)} new items, {len(relevant)} pass the keyword filter")
-    if not relevant:
+
+    alerts = [a for a in (analyze_headline(i) for i in relevant) if a]
+    alerts = filter_cooldown(alerts, state)
+    save_state(state)
+    print(f"{len(alerts)} alert(s) after rules + cooldown")
+    if not alerts:
         return 0
 
     gold_price = get_gold_spot()
-    analysis = analyze(relevant, gold_price)
-    flagged = [a for a in analysis.items if a.market_moving]
-    print(f"Claude flagged {len(flagged)} headline(s) as market-moving")
-    if not flagged:
-        return 0
-
-    subject, body = format_alert(flagged, analysis.overall_summary, gold_price)
+    subject, body = format_alert(alerts, gold_price)
     delivered = send_telegram(body)
     delivered = send_email(subject, body) or delivered
     if not delivered:
