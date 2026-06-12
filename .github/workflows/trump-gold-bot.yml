@@ -1,0 +1,50 @@
+name: Trump Gold Alert Bot
+
+on:
+  schedule:
+    # Every 15 minutes. NOTE: GitHub only runs scheduled workflows on the
+    # repository's DEFAULT branch — merge this to your default branch to
+    # activate the schedule.
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trump-gold-bot
+  cancel-in-progress: false
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r bot/requirements.txt
+
+      - name: Run bot
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          ALERT_EMAIL_TO: ${{ secrets.ALERT_EMAIL_TO }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python bot/trump_gold_bot.py
+
+      - name: Persist seen-headlines state
+        run: |
+          git config user.name "trump-gold-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add bot/seen_items.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update seen headlines state"
+            git pull --rebase
+            git push
+          fi
