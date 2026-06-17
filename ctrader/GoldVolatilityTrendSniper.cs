@@ -52,8 +52,8 @@ namespace cAlgo.Robots
         [Parameter("ATR Multiplier for Break-Even", DefaultValue = 1.5, MinValue = 0.1, Step = 0.1, Group = "Risk")]
         public double AtrBreakEvenMultiplier { get; set; }
 
-        [Parameter("Volume (Units)", DefaultValue = 10000, MinValue = 1, Group = "Risk")]
-        public double VolumeInUnits { get; set; }
+        [Parameter("Volume (Lots)", DefaultValue = 0.1, MinValue = 0.01, Step = 0.01, Group = "Risk")]
+        public double VolumeInLots { get; set; }
 
         [Parameter("Start Trading Hour (GMT)", DefaultValue = 7, MinValue = 0, MaxValue = 23, Group = "Session")]
         public int StartTradingHour { get; set; }
@@ -169,10 +169,11 @@ namespace cAlgo.Robots
                 return;
             }
 
-            double volume = Symbol.NormalizeVolumeInUnits(VolumeInUnits, RoundingMode.ToNearest);
+            // Convert the requested lot size into the symbol's native volume units.
+            double volume = Symbol.NormalizeVolumeInUnits(Symbol.QuantityToVolumeInUnits(VolumeInLots), RoundingMode.ToNearest);
             if (volume <= 0)
             {
-                Print("Aborting {0}: normalized volume is zero (requested {1} units).", tradeType, VolumeInUnits);
+                Print("Aborting {0}: normalized volume is zero (requested {1} lots).", tradeType, VolumeInLots);
                 return;
             }
 

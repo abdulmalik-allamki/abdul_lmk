@@ -37,8 +37,8 @@ namespace cAlgo.Robots
         [Parameter("Strategy Name", DefaultValue = "Gold Micro Scalper", Group = "General")]
         public string StrategyName { get; set; }
 
-        [Parameter("Volume (Units)", DefaultValue = 10000, MinValue = 1, Group = "General")]
-        public double VolumeInUnits { get; set; }
+        [Parameter("Volume (Lots)", DefaultValue = 0.1, MinValue = 0.01, Step = 0.01, Group = "General")]
+        public double VolumeInLots { get; set; }
 
         // ============================ SIGNAL / CONFIRMATION ============================
         [Parameter("Fast EMA Period", DefaultValue = 9, MinValue = 2, Group = "Signal")]
@@ -230,10 +230,11 @@ namespace cAlgo.Robots
 
         private void OpenScalp(TradeType tradeType, double spreadPips, double atrPips)
         {
-            double volume = Symbol.NormalizeVolumeInUnits(VolumeInUnits, RoundingMode.ToNearest);
+            // Convert the requested lot size into the symbol's native volume units.
+            double volume = Symbol.NormalizeVolumeInUnits(Symbol.QuantityToVolumeInUnits(VolumeInLots), RoundingMode.ToNearest);
             if (volume <= 0)
             {
-                Print("Aborting {0}: normalized volume is zero (requested {1} units).", tradeType, VolumeInUnits);
+                Print("Aborting {0}: normalized volume is zero (requested {1} lots).", tradeType, VolumeInLots);
                 return;
             }
 
