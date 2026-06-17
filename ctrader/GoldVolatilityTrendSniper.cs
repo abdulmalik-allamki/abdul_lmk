@@ -231,7 +231,7 @@ namespace cAlgo.Robots
         private void ApplyBreakEven(Position position, double targetStop)
         {
             double normalizedStop = Math.Round(targetStop, Symbol.Digits);
-            TradeResult result = ModifyPosition(position, normalizedStop, position.TakeProfit);
+            TradeResult result = ModifyPosition(position, normalizedStop, position.TakeProfit, ProtectionType.Absolute);
 
             if (result.IsSuccessful)
                 Print("BREAK-EVEN: {0} #{1} stop moved to {2} (entry {3}).",
